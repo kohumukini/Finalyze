@@ -18,14 +18,62 @@
             </ul>
         </nav>
 
-        <div class="search-container">
+        <form class="search-container">
             <label for="quick-search">Quick Search</label>
-            <input type="text" id="quick-search" placeholder="Ask me something..." />
-        </div>
+            <input type="text" id="quick-search" list="search-suggestions" placeholder="Ask me something..." />
+            <datalist id="search-suggestions">
+                <option value="What is the taste of a banana?">
+                <option value="What color is the sky?">
+            </datalist>
+        </form>
     </header>
 
     <main>
+        <section class="box-section">
+            <h4>Border Styles</h4>
+            <ul class="box-list">
+                <li class="box solid-box"></li>
+                <li class="box dotted-box"></li>
+            </ul>
+        </section>
 
+        <section class="box-section">
+            <h4>Border Styles</h4>
+            <ul class="box-list">
+                <li class="box solid-box"></li>
+                <li class="box dotted-box"></li>
+            </ul>
+        </section>
+
+        <section class="box-section">
+            <h4>Border Styles</h4>
+            <ul class="box-list">
+                <li class="box solid-box"></li>
+                <li class="box dotted-box"></li>
+            </ul>
+        </section>
     </main>
+
+    <footer class="site-footer">
+        <ul class="footer-list">
+            <li>
+                <p>© 2026 Finalyze. All Rights Reserved.</p>
+            </li>
+            <li>
+                <div class="social-links" aria-label="Social links">
+                    <a href="https://github.com/kohumukini/Finalyze" target="_blank" rel="noreferrer" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.2-1.7-1.2-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 .1 2-.7 2.4-1.4.1-.2.4-.6.8-.8-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.4-2.3 1.1-3.1-.1-.3-.5-1.4.1-2.9 0 0 .9-.3 3 .1 1-.3 2-.4 3-.4 1 0 2 .1 3 .4 2.1-.4 3-.1 3-.1.6 1.5.2 2.6.1 2.9.7.8 1.1 1.8 1.1 3.1 0 4.5-2.7 5.5-5.3 5.8.4.3.8.9.8 1.8v2.7c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.65 18.35.5 12 .5Z"/>
+                        </svg>
+                    </a>
+                    <a href="https://linkedin.com/in/kealii-ohumukini" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M6.94 8.5A1.56 1.56 0 1 0 6.94 5.38a1.56 1.56 0 0 0 0 3.12ZM5.5 9.75h2.88V18H5.5V9.75Zm4.8 0h2.76v1.12h.04c.38-.72 1.32-1.48 2.72-1.48 2.9 0 3.44 1.9 3.44 4.38V18H16.8v-7.56c0-1.8-.03-4.12-2.52-4.12-2.52 0-2.9 1.97-2.9 3.99V18H10.3V9.75Z"/>
+                        </svg>
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </footer>
 </body>
 </html>
