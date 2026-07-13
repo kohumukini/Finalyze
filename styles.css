@@ -1,9 +1,11 @@
 :root {
-    --text-color: #000000; 
-    --primary-color: #000000; 
-    --secondary-color: #111111;
-    --primary-background: #FFFFFF; 
-    --accent-color: #F3F4F6;
+    --primary-color: #E57E05;
+    --accent-color: #F49011;
+    --secondary-color: #F6C56B;
+    --text-color: #F8FAFC;
+    --primary-background: #0B1120;
+    --surface-card: #111827;
+    --muted-border: rgba(246, 197, 107, 0.18);
     --space-1: 8px;
     --space-2: 12px;
     --space-3: 16px;
@@ -19,12 +21,14 @@
 * {
     margin: 0; 
     padding: 0; 
-    color: var(--text-color);
 }
 
 body {
-    min-height: 100vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
     background-color: var(--primary-background);
+    color: var(--text-color);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     line-height: 1.5;
 }
@@ -34,7 +38,8 @@ header {
     grid-template-rows: auto auto;
     gap: var(--space-4);
     padding: var(--space-4) 0 var(--space-4);
-    border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 2px solid var(--muted-border);
+    flex-shrink: 0;
 }
 
 nav {
@@ -62,6 +67,7 @@ ul {
     flex-direction: row;
     gap: var(--space-3);
     list-style: none;
+    list-style-type: none;
     align-items: center;
 }
 
@@ -83,46 +89,130 @@ ul li:hover {
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: min(560px, 92%);
+    width: min(560px, 50%);
     margin: 0 auto;
-    border: 1px solid var(--text-color);
+    padding: 4px;
+    border: 1px solid var(--muted-border);
     border-radius: var(--radius);
     overflow: hidden;
+    background-color: rgba(17, 24, 39, 0.9);
+    transition: width 0.8s ease, box-shadow 0.2s ease;
+}
+
+.search-container:focus-within {
+    width: min(680px, 60%);
+    box-shadow: 0 0 0 1px rgba(244, 144, 17, 0.2);
 }
 
 label[for="quick-search"] {
     font-size: 0.875rem;
     font-weight: 700;
-    opacity: 0.75;
+    opacity: 0.8;
     padding: 10px 14px;
     white-space: nowrap;
-    background-color: var(--primary-background);
+    background-color: transparent;
+    color: var(--secondary-color);
 }
 
 input[type="text"] {
     flex: 1;
+    min-width: 0;
     padding: 12px 14px;
+    margin: 0; 
     border: none;
-    border-left: 1px solid var(--text-color);
+    border-left: 1px solid rgba(246, 197, 107, 0.16);
     font-size: 1rem;
-    background-color: var(--primary-background);
-    transition: background-color 0.3s ease;
+    background-color: transparent;
+    color: var(--text-color);
+    transition: background-color 0.8s ease, padding 0.2s ease;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;  
+}
+
+.search-container:focus-within input[type="text"] {
+    padding: 14px 16px;
 }
 
 input[type="text"]:focus {
     outline: none;
-    background-color: var(--accent-color);
+    background-color: rgba(244, 144, 17, 0.06);
 }
 
 main {
+    flex: 1;
     padding: var(--space-5) var(--space-4);
     margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.rag-main {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-4);
+    align-items: stretch;
+    padding: var(--space-4) 0;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.rag-panel {
+    flex: 1;
+    padding: var(--space-4);
+    border: 1px solid var(--muted-border);
+    border-radius: 14px;
+    background-color: var(--surface-card);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.rag-panel-left {
+    flex: 0 0 25%;
+}
+
+.rag-panel-right {
+    flex: 1;
+}
+
+.rag-panel h3 {
+    font-size: 1.1rem;
+    margin-bottom: var(--space-2);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--muted-border);
+}
+
+.rag-panel p {
+    margin-bottom: var(--space-3);
+}
+
+.rag-panel ul {
+    display: block;
+    padding-left: var(--space-4);
+    list-style-type: none;
+}
+
+.rag-panel li {
+    padding: 4px 0;
+    list-style: none;
+    list-style-type: none;
+}
+
+.rag-card {
+    padding: 12px;
+    border: 1px solid var(--muted-border);
+    border-radius: 10px;
+    background-color: rgba(244, 144, 17, 0.1);
 }
 
 .site-footer {
     padding: var(--space-3) var(--space-4);
-    border-top: 2px solid rgba(0, 0, 0, 0.2);
+    border-top: 2px solid var(--muted-border);
     background-color: var(--primary-background);
+    flex-shrink: 0;
 }
 
 .footer-list {
@@ -195,4 +285,10 @@ main {
 
 .solid-box {
     border: 2px solid #000000;
+}
+
+#rag-search {
+    width: 100%; 
+    border-radius: 10px; 
+    border: none; 
 }
