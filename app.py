@@ -1,8 +1,12 @@
 import os
 from typing import Any, Dict, List
 
-from fastapi import Body, FastAPI, HTTPException
+from fastapi import Body, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 try:
     from dotenv import load_dotenv
@@ -16,6 +20,8 @@ except ImportError:  # pragma: no cover - optional dependency
 
 if load_dotenv is not None:
     load_dotenv()
+    
+limiter = Limiter(key_func=get_remote_address, default_limits=["5/minute"])
 
 app = FastAPI(title="Finalyze RAG Backend")
 
@@ -26,6 +32,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # In-memory storage for the simple prototype backend.
 documents: List[Dict[str, Any]] = []
@@ -60,7 +69,8 @@ def list_documents() -> Dict[str, List[Dict[str, Any]]]:
 
 
 @app.post("/chat")
-def chat(message: Dict[str, str]) -> Dict[str, str]:
+@limiter.limit("5/minute")
+def chat(request: Request, message: Dict[str, str]) -> Dict[str, str]:
     user_message = (message.get("message") or "").strip()
     if not user_message:
         raise HTTPException(status_code=400, detail="Message must not be empty.")
@@ -77,7 +87,7 @@ def chat(message: Dict[str, str]) -> Dict[str, str]:
             response = client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
-                    {"role": "system", "content": "You are a helpful assistant for the Finalyze RAG prototype."},
+                    {"role": "system", "content": "You are a helpful assistant for anything the user asks."},
                     *chat_history,
                 ],
                 temperature=0.7,

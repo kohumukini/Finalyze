@@ -36,6 +36,11 @@ chatForm.addEventListener('submit', async (event) => {
       body: JSON.stringify({ message }),
     });
 
+    if (response.status == 429) {
+      alert("Rate limit exceeded. Please try again in a few minutes.");
+      return;
+    }
+
     const data = await response.json();
     chatConversation.removeChild(thinkingBubble);
     createBubble(data.response, 'llm');
