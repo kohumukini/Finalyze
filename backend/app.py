@@ -1,4 +1,3 @@
-import os
 from typing import Any, Dict, List
 
 from fastapi import Body, FastAPI, HTTPException, Request
@@ -8,26 +7,34 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-try:
-    from dotenv import load_dotenv
-except ImportError:  # pragma: no cover - optional dependency
-    load_dotenv = None
+from .config import (
+    GROQ_API_KEY,
+    GROQ_MODEL,
+    EMBEDDING_MODEL,
+    RATE_LIMIT,
+    CORS_ALLOW_ORIGINS,
+    DEFAULT_TEMPERATURE,
+    MAX_TOKENS,
+)
 
 try:
     from groq import Groq
 except ImportError:  # pragma: no cover - optional dependency
     Groq = None
-
-if load_dotenv is not None:
-    load_dotenv()
     
-limiter = Limiter(key_func=get_remote_address, default_limits=["5/minute"])
+limiter = Limiter(key_func=get_remote_address, default_limits=[RATE_LIMIT])
 
 app = FastAPI(title="Finalyze RAG Backend")
 
+# Configure CORS origins from config (comma-separated or '*')
+if isinstance(CORS_ALLOW_ORIGINS, str) and CORS_ALLOW_ORIGINS.strip() == "*":
+    cors_origins = ["*"]
+else:
+    cors_origins = [o.strip() for o in str(CORS_ALLOW_ORIGINS).split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -69,7 +76,7 @@ def list_documents() -> Dict[str, List[Dict[str, Any]]]:
 
 
 @app.post("/chat")
-@limiter.limit("5/minute")
+@limiter.limit(RATE_LIMIT)
 def chat(request: Request, message: Dict[str, str]) -> Dict[str, str]:
     user_message = (message.get("message") or "").strip()
     if not user_message:
@@ -78,20 +85,20 @@ def chat(request: Request, message: Dict[str, str]) -> Dict[str, str]:
     chat_history.append({"role": "user", "content": user_message})
 
     client = None
-    groq_api_key = os.environ.get("GROQ_API_KEY")
+    groq_api_key = GROQ_API_KEY
     if Groq is not None and groq_api_key:
         client = Groq(api_key=groq_api_key)
 
     if client is not None:
         try:
             response = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+                model=GROQ_MODEL,
                 messages=[
                     {"role": "system", "content": "You are a helpful assistant for anything the user asks."},
                     *chat_history,
                 ],
-                temperature=0.7,
-                max_tokens=300,
+                temperature=DEFAULT_TEMPERATURE,
+                max_tokens=MAX_TOKENS,
             )
             assistant_response_text = response.choices[0].message.content.strip()
         except Exception:
