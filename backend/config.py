@@ -1,5 +1,11 @@
 import os
-from dotenv import load_dotenv
+
+try:
+    from dotenv import load_dotenv
+except ImportError:  # pragma: no cover - optional dependency in local dev
+    def load_dotenv():
+        return False
+
 
 load_dotenv()
 
