@@ -1,0 +1,19 @@
+services: 
+  db: 
+    image: postgres:latest 
+    container_name: postgres_database
+    env_file: ../.env
+    environment: 
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASS}
+      POSTGRES_DB: ${POSTSGRES_DB}
+    ports: 
+      - "5432:5432"
+    volumes: 
+      - postgres_data:var/lib/postgresql
+    healthcheck: 
+      test: ["CMD_SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 10s
+      start_period: 20s

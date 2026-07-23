@@ -1,0 +1,64 @@
+MONOPOLY — OFFICIAL RULES SUMMARY
+
+OVERVIEW
+Monopoly is a real-estate trading game for 2–8 players. Players move around the board buying properties, building houses and hotels, and charging opponents rent. The goal is to be the last player remaining after all others have gone bankrupt.
+
+COMPONENTS
+1 game board, 28 title deed cards (one per property), 16 Chance cards, 16 Community Chest cards, 1 pack of play money, 32 houses, 12 hotels, 2 dice, 8 tokens, and a Banker's tray.
+
+SETUP
+Each player chooses a token and places it on Go. The Banker distributes starting money: each player receives $1,500 in the following denominations — two $500 bills, two $100 bills, two $50 bills, six $20 bills, five $10 bills, five $5 bills, and five $1 bills. Shuffle the Chance and Community Chest cards separately and place them face down on the board. All properties, railroads, and utilities begin unowned.
+
+TURN STRUCTURE
+On your turn: roll both dice and move your token clockwise the indicated number of spaces. After moving, take the action corresponding to the space you landed on. You may buy property, build, or trade at any point during your turn.
+
+PROPERTIES
+Unowned properties: If you land on an unowned property, you may buy it from the Bank at the listed price. Take the title deed card and keep it in front of you. If you decline to buy, the Bank auctions it to the highest bidder — any player, including you, may bid.
+
+Owned properties: If you land on a property owned by another player, you must pay rent to that player. The rent amount is printed on the title deed and varies based on whether houses or hotels are built and whether the owner holds a complete color group (a monopoly).
+
+MONOPOLY (COLOR GROUP)
+Owning all properties in a color group is a monopoly. With a monopoly, the owner may charge double the base rent on any unimproved properties in that group. Only when you own a complete color group can you build houses and hotels on those properties.
+
+BUILDING HOUSES AND HOTELS
+You may buy houses from the Bank at any time during your turn. Houses must be built evenly across all properties in a color group — you cannot build a second house on any property in the group until each property has one house, and so on. The cost per house is printed on the title deed.
+
+When all four houses on a property are replaced with one hotel, return the four houses to the Bank and pay the hotel price. Only one hotel is allowed per property. If the Bank runs out of houses, no more can be built until other players return some.
+
+RENT WITH BUILDINGS
+Rent increases significantly with buildings. A property with one house earns more than base rent, with four houses earns substantially more, and with a hotel earns the maximum rent for that property. Specific amounts are listed on each title deed.
+
+RAILROADS AND UTILITIES
+Railroads: Rent is $25 for one railroad, $50 for two, $100 for three, and $200 if one player owns all four.
+Utilities: If you land on a utility owned by another player who owns only one utility, they collect 4 times the dice roll. If they own both utilities, they collect 10 times the dice roll.
+
+CHANCE AND COMMUNITY CHEST
+Landing on a Chance or Community Chest space requires drawing the top card from the corresponding deck. Follow the instructions on the card, then return it face down to the bottom of the deck. Get Out of Jail Free cards may be kept until used or sold.
+
+INCOME TAX AND LUXURY TAX
+Landing on Income Tax requires paying the Bank $200. Landing on Luxury Tax requires paying the Bank $100.
+
+FREE PARKING
+Landing on Free Parking has no effect in the standard rules — it is simply a resting place. House rules vary widely on this space, but officially, no money is collected here.
+
+GO
+Every time you pass or land on Go, collect $200 from the Bank. If you land directly on Go (not just pass it), you still collect only $200.
+
+JAIL
+You are sent to Jail if: you land on the Go to Jail space, draw a card that sends you to Jail, or roll doubles three times in a row. When sent to Jail, move directly to Jail — do not pass Go, do not collect $200.
+
+To get out of Jail: pay a $50 fine before rolling on any of your next three turns, use a Get Out of Jail Free card, or roll doubles on any of your three turns in Jail. If you have not rolled doubles after three turns, pay the $50 fine and move the number rolled on your final attempt.
+
+Being in Jail does not prevent you from buying or selling property, building, or collecting rent.
+
+MORTGAGING
+You may mortgage a property to the Bank for the mortgage value printed on the title deed (roughly half the purchase price). All houses and hotels must be sold back to the Bank before mortgaging a property. While mortgaged, the property cannot collect rent. To unmortgage, pay the Bank the mortgage value plus 10% interest.
+
+TRADING
+Players may trade properties, cash, and Get Out of Jail Free cards with each other at any time during their own turn. Trades are negotiated freely — any deal both players agree to is valid. Future rent immunity ("free parking on my properties") may be included in trades but is only enforceable by the players' own agreement.
+
+BANKRUPTCY
+You are bankrupt if you owe more than you can pay — including selling houses and hotels and mortgaging all properties. If you go bankrupt to another player, everything you own goes to that player (including mortgaged properties, though they must pay the 10% interest if they unmortgage). If you go bankrupt to the Bank, all your properties return to the Bank for auction. A bankrupt player is eliminated.
+
+WINNING
+The last player remaining after all others have gone bankrupt wins the game.

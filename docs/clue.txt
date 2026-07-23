@@ -1,0 +1,39 @@
+CLUE (CLUEDO) — OFFICIAL RULES SUMMARY
+
+OVERVIEW
+Clue (known as Cluedo outside North America) is a deduction game for 2–6 players. A murder has been committed in a mansion. Players move through rooms, make suggestions about the crime, and eliminate possibilities until they can name the correct suspect, weapon, and room. The first player to make a correct accusation wins.
+
+COMPONENTS
+1 game board (a mansion floor plan with 9 rooms and connecting hallways), 6 suspect tokens (Miss Scarlett, Colonel Mustard, Mrs. White, Reverend Green, Mrs. Peacock, Professor Plum), 6 miniature weapons (Candlestick, Knife, Lead Pipe, Revolver, Rope, Wrench), 21 cards (6 suspect cards, 6 weapon cards, 9 room cards), 1 confidential case file envelope, a detective notebook for each player, and 2 dice.
+
+SETUP
+Remove one suspect card, one weapon card, and one room card at random without looking at them and seal them in the confidential case file envelope. These three cards represent the actual murderer, murder weapon, and crime scene — they remain secret until the end of the game. Shuffle the remaining 18 cards together and deal them face-down to all players as evenly as possible. Players may have different numbers of cards. Each player reviews their own cards privately and marks them off in their detective notebook as eliminated possibilities. Place one weapon miniature in each of the 9 rooms randomly. Each player places their token on their designated starting space on the board.
+
+TURN STRUCTURE
+On your turn: roll the dice and move your token up to the rolled number of spaces along the hallways, or move into or through a room. After moving, you may make a Suggestion if you are in a room. You may make an Accusation at any point during your turn (see below).
+
+MOVING
+Movement is along the printed pathway squares. You cannot move through walls or pass through another player's token. You may enter a room through any open doorway. Entering a room costs no movement — the room counts as a single space. Secret passages in the corners of the board allow you to move directly to the diagonally opposite corner room without rolling.
+
+MAKING A SUGGESTION
+When you are in a room, you may make a Suggestion — a claim about the murder: one suspect, one weapon, and the room you are currently in (you cannot suggest a room you are not in). Immediately move the named suspect token and weapon into your current room. Then, starting with the player to your left, each player in turn must privately show you one card from their hand that matches any element of your suggestion (suspect, weapon, or room) — if they have one. As soon as one player shows you a card, the suggestion process ends; no further players need to respond. If a player has multiple matching cards, they choose which one to show you. If a player has no matching cards, they say "I cannot disprove" and play passes to the next player.
+
+You note what you learn in your detective notebook. Players who witness the suggestion know only that you were shown a card — they do not know which card.
+
+DEDUCTION
+The core of the game is tracking which cards have been shown to you (and which have not). If no one can disprove a suggestion, it means none of the named cards are in anyone's hand — they are all in the envelope. Use your detective notebook to cross off confirmed eliminations and circle strong possibilities. Pay attention to suggestions other players make and what they are or aren't shown — this gives indirect information about other players' hands.
+
+MAKING AN ACCUSATION
+When you believe you know the correct suspect, weapon, and room, you may make an Accusation on your turn. An Accusation is final — you may only make one. State your accusation clearly: "I accuse [suspect] with the [weapon] in the [room]." Then secretly look at the three cards in the confidential envelope.
+
+If your accusation is correct: reveal the cards to all players and win the game.
+If your accusation is incorrect: replace the cards in the envelope without revealing them to other players. You are eliminated from making further accusations but remain in the game — other players may still make suggestions to you, and you must still disprove suggestions you can. You cannot win.
+
+WINNING
+The first player to make a correct Accusation wins. If all players have made incorrect accusations and been eliminated, the game ends with no winner — the crime remains unsolved.
+
+STRATEGY NOTES
+Early in the game, spread suggestions across different suspects and weapons to eliminate possibilities quickly. Use your own cards strategically in suggestions — if you suggest a suspect you already hold a card for, no one can disprove on that suspect, and any failure to disprove narrows down the other two elements. Watch which suggestions opponents repeat, as this signals what they haven't yet eliminated.
+
+VARIANTS
+In the two-player variant, deal three extra hands face-down and treat them as "ghost hands." Suggestions may be disproved by ghost hands, but the disprover remains anonymous — you know a card exists that disproves you, but not which or whose.

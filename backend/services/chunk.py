@@ -1,5 +1,5 @@
 import re
-from ..config import MAX_CHUNK_SIZE, OVERLAP_SIZE
+from ..core.config import MAX_CHUNK_SIZE, OVERLAP_SIZE
 
 
 # Chunker
