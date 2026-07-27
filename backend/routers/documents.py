@@ -4,8 +4,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from ..core.database import Documents, get_db_session
+from ..core.logger import get_logger
 from ..core.schema import DocumentCreateRequest, DocumentItem
 
+logger = get_logger(__name__)
 router = APIRouter(prefix="/docs", tags=["documents"])
 
 
@@ -14,7 +16,7 @@ def list_documents(db: Session = Depends(get_db_session)):
     try:
         stmt = select(Documents)
         result = db.execute(stmt).scalars().all()
-        return [
+        documents = [
             DocumentItem(
                 document_id=document.document_id,
                 document_name=document.metadata_.get("name", f"document_{document.document_id}"),
@@ -24,8 +26,11 @@ def list_documents(db: Session = Depends(get_db_session)):
             )
             for document in result
         ]
+        logger.info("Fetched %d documents from the database", len(documents))
+        return documents
     except SQLAlchemyError as exc:
         db.rollback()
+        logger.error("Error fetching documents: %s", exc, exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to fetch documents: {exc}") from exc
 
 
@@ -39,6 +44,7 @@ def add_document(payload: DocumentCreateRequest, db: Session = Depends(get_db_se
         db.add(document)
         db.commit()
         db.refresh(document)
+        logger.info("Created document '%s' with id %s", payload.document_name, document.document_id)
 
         return DocumentItem(
             document_id=document.document_id,
@@ -49,21 +55,20 @@ def add_document(payload: DocumentCreateRequest, db: Session = Depends(get_db_se
         )
     except SQLAlchemyError as exc:
         db.rollback()
+        logger.error("Error creating document '%s': %s", payload.document_name, exc, exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to create document: {exc}") from exc
 
 
 @router.get("/{document_name}", response_model=DocumentItem)
 def get_document_by_name(document_name: str, db: Session = Depends(get_db_session)):
     try:
-        result = db.execute(select(Documents)).scalars().all()
-        document = next(
-            (item for item in result if item.metadata_.get("name") == document_name),
-            None,
-        )
+        document = db.query(Documents).filter()
 
         if document is None:
+            logger.warning("Document '%s' not found", document_name)
             raise HTTPException(status_code=404, detail=f"Document '{document_name}' not found.")
 
+        logger.info("Retrieved document '%s' with id %s", document_name, document.document_id)
         return DocumentItem(
             document_id=document.document_id,
             document_name=document.metadata_.get("name", document_name),
@@ -73,4 +78,5 @@ def get_document_by_name(document_name: str, db: Session = Depends(get_db_sessio
         )
     except SQLAlchemyError as exc:
         db.rollback()
+        logger.error("Error fetching document '%s': %s", document_name, exc, exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to fetch document: {exc}") from exc

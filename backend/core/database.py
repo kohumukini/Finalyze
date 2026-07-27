@@ -2,9 +2,9 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import JSON, Text, create_engine, func
+from sqlalchemy import JSON, Text, create_engine, func, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker, relationship
 
 try:
     from dotenv import load_dotenv
@@ -38,30 +38,39 @@ except Exception:
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=ENGINE)
 
-
 class Base(DeclarativeBase):
     pass
 
 
 metadata_column_type = JSONB if ENGINE.dialect.name == "postgresql" else JSON
-vector_column_type = Vector(MODEL_VECTOR_SIZE) if ENGINE.dialect.name == "postgresql" else Text
 
 
 class Documents(Base):
     __tablename__ = "documents"
 
-    document_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    documents_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    document_name: Mapped[str] = mapped_column(String(255))
+    
     timestamp: Mapped[datetime] = mapped_column(default=func.now())
-    content: Mapped[str] = mapped_column(Text, nullable=False)
-    metadata_: Mapped[dict] = mapped_column("metadata", metadata_column_type, nullable=False)
+    
+    content: Mapped[str] = mapped_column(Text)
+    metadata_: Mapped[dict] = mapped_column("metadata", metadata_column_type, default = dict)
+    
+    chunks: Mapped[list["Chunks"]] = relationship("Chunks", back_populates="document", cascade="all, delete-orphan")
 
 
 class Chunks(Base):
     __tablename__ = "document_chunks"
 
     chunk_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    vector: Mapped[list[float]] = mapped_column(vector_column_type)
-    metadata_: Mapped[dict] = mapped_column("metadata", metadata_column_type)
+    
+    document_id: Mapped[int] = mapped_column(ForeignKey("documents.documents_id"))
+    content: Mapped[str] = mapped_column(Text)
+    
+    vector: Mapped[list[float]] = mapped_column(Vector(MODEL_VECTOR_SIZE))
+    metadata_: Mapped[dict] = mapped_column("metadata", metadata_column_type, default = dict)
+    
+    document: Mapped["Documents"] = relationship("Documents", back_populates="chunks")
 
 
 def init_db():
