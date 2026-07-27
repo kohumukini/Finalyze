@@ -6,6 +6,8 @@ from sqlalchemy import JSON, Text, create_engine, func, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker, relationship
 
+from pgvector.sqlalchemy import VECTOR
+
 try:
     from dotenv import load_dotenv
 except ImportError:  # pragma: no cover - optional dependency in local dev
@@ -67,7 +69,7 @@ class Chunks(Base):
     document_id: Mapped[int] = mapped_column(ForeignKey("documents.documents_id"))
     content: Mapped[str] = mapped_column(Text)
     
-    vector: Mapped[list[float]] = mapped_column(Vector(MODEL_VECTOR_SIZE))
+    embedding: Mapped[list[float]] = mapped_column(VECTOR(MODEL_VECTOR_SIZE))
     metadata_: Mapped[dict] = mapped_column("metadata", metadata_column_type, default = dict)
     
     document: Mapped["Documents"] = relationship("Documents", back_populates="chunks")
