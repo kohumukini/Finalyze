@@ -1,22 +1,12 @@
 {
-    "builds": [
+    "rewrites": [
         {
-            "src": "backend/app/app.py",
-            "use": "@vercel/python"
+            "source": "/backend/(.*)",
+            "destination": "/backend/app/app.py"
         },
         {
-            "src": "frontend/test_rag.html",
-            "use": "@vercel/static"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/api/(.*)",
-            "dest": "backend/app/app.py"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "frontend/$1"
+            "source": "/(.*)",
+            "destination": "/frontend/$1"
         }
     ]
 }
