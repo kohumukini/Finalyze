@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field
 
 class DocumentItem(BaseModel):
     id: int | None = None
-    document_name: str
     timestamp: datetime | None = None
     content: str
     metadata: dict[str, Any] = Field(default_factory=dict)
