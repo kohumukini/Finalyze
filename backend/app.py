@@ -1,8 +1,11 @@
 from typing import Dict
-import logging
+
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
@@ -22,6 +25,9 @@ if isinstance(CORS_ALLOW_ORIGINS, str) and CORS_ALLOW_ORIGINS.strip() == "*":
     cors_origins = ["*"]
 else:
     cors_origins = [o.strip() for o in str(CORS_ALLOW_ORIGINS).split(",") if o.strip()]
+    
+BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = BASE_DIR / "frontend"
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,3 +50,5 @@ logger.info("FastAPI app initialized with documents and chat routers.")
 def health_check() -> Dict[str, str]:
     logger.debug("Health check requested")
     return {"status": "ok"} 
+
+app.mount("/", StaticFiles(directory = FRONTEND_DIR, html = True), name = "frontend")
