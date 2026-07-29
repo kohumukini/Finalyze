@@ -7,10 +7,10 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
-from ..core.config import CORS_ALLOW_ORIGINS, RATE_LIMIT
-from ..core.logger import configure_logging, get_logger
-from ..routers.chat import router as chat_router
-from ..routers.documents import router as documents_router
+from .core.config import CORS_ALLOW_ORIGINS, RATE_LIMIT
+from .core.logger import configure_logging, get_logger
+from .routers.chat import router as chat_router
+from .routers.documents import router as documents_router
 
 configure_logging()
 logger = get_logger(__name__)
