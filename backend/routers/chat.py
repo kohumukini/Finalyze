@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -7,6 +9,7 @@ from ..core.config import DEFAULT_TEMPERATURE, GROQ_API_KEY, GROQ_MODEL, MAX_TOK
 from ..core.database import get_db_session
 from ..core.logger import get_logger
 from ..core.schema import ChatRequest, ChatResponse
+from ..services.ingest import load_chunks
 
 logger = get_logger(__name__)
 
@@ -31,14 +34,18 @@ def chat(request: Request, payload: ChatRequest, db: Session = Depends(get_db_se
         client = Groq(api_key=GROQ_API_KEY)
 
     logger.info("Received chat request")
+    
     if client is not None:
+        doc_context = load_chunks()
+        context = json.dumps(doc_context, indent = 4)
         try:
             response = client.chat.completions.create(
                 model=GROQ_MODEL,
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are a helpful assistant for anything the user asks.",
+                        "content": "You are a helpful assistant. Use the following data to answer any of the users questions:\n"
+                        + context,
                     },
                     {"role": "user", "content": user_message},
                 ],
@@ -47,6 +54,8 @@ def chat(request: Request, payload: ChatRequest, db: Session = Depends(get_db_se
             )
             assistant_response_text = response.choices[0].message.content.strip()
             logger.info("Groq chat completed successfully")
+            print(assistant_response_text)
+            print(len(assistant_response_text))
         except Exception as exc:
             logger.error("Groq chat failed: %s", exc, exc_info=True)
             assistant_response_text = f"I couldn't reach Groq right now, so I'm echoing your request: {user_message}"
