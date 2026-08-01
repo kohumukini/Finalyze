@@ -1,3 +1,5 @@
+import os
+
 from typing import Dict
 
 from pathlib import Path
@@ -15,6 +17,9 @@ from .core.logger import configure_logging, get_logger
 from .routers.chat import router as chat_router
 from .routers.documents import router as documents_router
 
+FRONTEND_URL = os.getenv("FRONTEND_URL")
+SERVE_FRONTEND = os.getenv("SERVE_FRONTEND", "true").lower() not in {"0", "false", "no", "off"}
+
 configure_logging()
 logger = get_logger(__name__)
 limiter = Limiter(key_func=get_remote_address, default_limits=[RATE_LIMIT])
@@ -28,6 +33,13 @@ else:
     
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = BASE_DIR / "frontend"
+
+allowed_origins = [
+    "http://localhost:3000", 
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+    FRONTEND_URL
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -49,6 +61,10 @@ logger.info("FastAPI app initialized with documents and chat routers.")
 @app.get("/health")
 def health_check() -> Dict[str, str]:
     logger.debug("Health check requested")
-    return {"status": "ok"} 
+    return {"status": "ok"}
 
-app.mount("/", StaticFiles(directory = FRONTEND_DIR, html = True), name = "frontend")
+if SERVE_FRONTEND and FRONTEND_DIR.exists():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+    logger.info("Static frontend mount enabled at the app root.")
+else:
+    logger.info("Static frontend mount disabled; backend API-only mode is active.")

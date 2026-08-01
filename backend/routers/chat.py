@@ -21,7 +21,6 @@ except ImportError:
 router = APIRouter(prefix="/chat", tags=["chat"])
 limiter = Limiter(key_func=get_remote_address, default_limits=[RATE_LIMIT])
 
-
 @router.post("/model", response_model=ChatResponse)
 @limiter.limit(RATE_LIMIT)
 def chat(request: Request, payload: ChatRequest, db: Session = Depends(get_db_session)):
