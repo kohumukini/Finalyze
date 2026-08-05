@@ -10,8 +10,18 @@
 </div>
 
 ## Overview
+**Finalyze** was built to explore the internal mechanics of Retrieval-Augmented Generation (RAG) systems, bypassing black-box frameworks like LangChain or LlamaIndex. 
 
-## Intended Functionality
+The primary goal was to design, develop, and deploy a fully functional RAG system to parse, store, and query dense documents accurately.
+
+### Key Focus Areas
+- **Full-Stack lifecycle and Project Management:** Designed, built, and version-controlled application from static HTML webpages, through containerized backends, into full-stack deployment on Render
+- **RAG Pipeline:** Implemented chunking and ingestion pipeline, creating embeddings that are upserted into pgvector, an extension of PostgreSQL alongside tabular data
+- **Deployment & Configuration:** Configured backend docker environment for testing, managed CORS headers, and implemented rate limiting for stability
+
+### Key Takeaways
+
+**1. Project Schema & Project Design:** Strategizing finalyze reduced workload and alleviated development bottlenecks. Finalyze, as various other projects do, require cascading decisions eased by proper planning and project management. Finalyze required decisions for the types of tools to use, the vector database and embedding model, the host, and iterative development strategies among various others. 
 
 ## Architecture
 
