@@ -14,8 +14,11 @@ from slowapi.util import get_remote_address
 
 from .core.config import CORS_ALLOW_ORIGINS, RATE_LIMIT
 from .core.logger import configure_logging, get_logger
+from .core.database import init_db
 from .routers.chat import router as chat_router
 from .routers.documents import router as documents_router
+
+from contextlib import asynccontextmanager
 
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 SERVE_FRONTEND = os.getenv("SERVE_FRONTEND", "true").lower() not in {"0", "false", "no", "off"}
@@ -24,7 +27,14 @@ configure_logging()
 logger = get_logger(__name__)
 limiter = Limiter(key_func=get_remote_address, default_limits=[RATE_LIMIT])
 
-app = FastAPI(title="Finalyze RAG Backend", docs_url=None, redoc_url=None)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("Initializing database schema during startup.")
+    init_db()
+    logger.info("Database schema ready.")
+    yield
+
+app = FastAPI(title="Finalyze RAG Backend", docs_url=None, redoc_url=None, lifespan = lifespan)
 
 if isinstance(CORS_ALLOW_ORIGINS, str) and CORS_ALLOW_ORIGINS.strip() == "*":
     cors_origins = ["*"]

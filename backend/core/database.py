@@ -29,7 +29,10 @@ USER = os.getenv("POSTGRES_USER", "postgres")
 PASSWORD = os.getenv("POSTGRES_PASS", "postgres")
 DB = os.getenv("POSTGRES_DB", "finalyze")
 PORT = os.getenv("POSTGRES_PORT", "5432")
-HOST = "db" if os.getenv("IS_DOCKER") else "localhost"
+HOST = os.getenv(
+    "POSTGRES_HOST",
+    "db" if os.getenv("IS_DOCKER", "").lower() in {"1", "true", "yes", "on"} else "localhost",
+)
 POSTGRES_URL = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB}"
 SQLITE_URL = "sqlite:///./finalyze.db"
 
@@ -76,6 +79,7 @@ class Chunks(Base):
 
 def init_db():
     Base.metadata.create_all(bind=ENGINE)
+    return ENGINE
 
 
 def get_db_session():
