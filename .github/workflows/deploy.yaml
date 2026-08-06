@@ -1,0 +1,25 @@
+name: Github Actions Render Deployment
+
+on: 
+  push: 
+    branches: 
+      - main
+
+permissions: 
+  deployment: write
+
+jobs: 
+  deploy: 
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout Repository
+        uses: actions/checkout@4 # Downloads and stores the code in a runner 
+      
+      - name: Trigger Render Deployment
+        uses: JorgeLNJunior/render-deploy@1.5.0
+        with: 
+          service_id: ${{ secrets.RENDER_SERVICE_ID }}
+          api_key: ${{ secrets.RENDER_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN}}
+          wait_deploy: true
+          deployment_environment: production
