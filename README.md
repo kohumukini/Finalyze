@@ -21,15 +21,58 @@ The primary goal was to design, develop, and deploy a fully functional RAG syste
 
 ### Key Takeaways
 
-**1. Project Schema & Project Design:** Strategizing finalyze reduced workload and alleviated development bottlenecks. Finalyze, as various other projects do, require cascading decisions eased by proper planning and project management. Finalyze required decisions for the types of tools to use, the vector database and embedding model, the host, and iterative development strategies among various others. 
+**1. Project Schema & Project Design:** Strategizing finalyze reduced workload and alleviated development bottlenecks. Finalyze, as various other projects do, require cascading decisions eased by proper planning and project management. Finalyze required decisions for the types of tools to use, the vector database and embedding model, the host, and iterative development strategies among various others.
+
+**2. API Management & Rate Limiting:** Implemented middle-ware rate limiting to reduce API abuse and prevent LLM provider throttling. API management is a broad area that expands past rate limiting and routing. Finalyze is a stepping stone to build an understanding of API management.
+
+**3. Deployment:** Configured deployment on Render ensuring proper routing between the static frontend assets and FastAPI endpoints.
 
 ## Architecture
 
+```
+  +-----------------+
+  | Static Frontend |
+  +--------+--------+
+           | User Input
+           v
+  +-----------------+       Fetch Request        +-----------------+
+  | JavaScript Form | -------------------------> |  FastAPI App    |
+  +--------+--------+ <------------------------- +--+-----------+--+
+           |                Return JSON             ↑           |
+           | Create elements                        |           | 1. Query for Embeddings
+           v                                        |           v    & Context
+  +-----------------+                               |   +------------------+
+  | DOM Manipulation|                               |   | PostgreSQL +     |
+  +--------+--------+                               |   | pgvector DB      |
+           | Update                                 |   +--------+---------+
+           v                                        |            |
+  +-----------------+                               |            | 2. Return Retrieved
+  | Static Frontend |                               |            |    Context Chunks
+  +-----------------+                               |            v
+                                                    |   +------------------+
+                                                    +-->| Groq API         |
+                                                        | (Llama 3.3)      |
+                                                        +------------------+
+                                                          3. Send Context +
+                                                             User Prompt
+```
 ## Tech
+
+| Layer | Tech |
+|---|---|
+| **Frontend** | <span style="color: gray">React, Typescript, Tailwind CSS, Vite</span> - HTML, CSS, JavavScript
+| **Backend**  | Python, FastAPI, SQLAlchemy
+| **Database** | PostgreSQL
+| **Deployment** | Render
 
 ## Features
 
 ## Roadmap
 
-## Learned
-
+- [] Build & attach vectordb
+- [] Allow for document uploads & storage
+- [] Implement pdf parsing & improve chunking system
+- [] Convert to React/TypeScript building components and type validation
+- [] Implement personal dashboard with stats
+- [] Build user sections & google login system
+- [] Finish UI touches
