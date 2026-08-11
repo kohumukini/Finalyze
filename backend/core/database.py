@@ -30,7 +30,12 @@ PASSWORD = os.getenv("POSTGRES_PASS", "postgres")
 DB = os.getenv("POSTGRES_DB", "finalyze")
 PORT = os.getenv("POSTGRES_PORT", "5432")
 HOST = "db" if os.getenv("IS_DOCKER") else "localhost"
-POSTGRES_URL = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB}"
+
+EXTERNAL_URL = os.getenv("EXTERNAL_URL")
+
+# Prefer the external Render/Postgres DSN when the workspace env provides one.
+# Otherwise, fall back to the standard container/local assembly used in this repo.
+POSTGRES_URL = EXTERNAL_URL or f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB}"
 SQLITE_URL = "sqlite:///./finalyze.db"
 
 try:

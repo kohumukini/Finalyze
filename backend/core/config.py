@@ -1,13 +1,14 @@
 import os
+from pathlib import Path
 
 try:
     from dotenv import load_dotenv
 except ImportError:  # pragma: no cover - optional dependency in local dev
-    def load_dotenv():
+    def load_dotenv(*args, **kwargs):
         return False
 
 
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).resolve().parents[2] / ".env")
 
 # LLM model
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
