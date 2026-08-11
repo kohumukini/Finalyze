@@ -8,6 +8,11 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker,
 
 from pgvector.sqlalchemy import VECTOR
 
+from .logger import get_logger, configure_logging
+
+configure_logging()
+logger = get_logger(__name__)
+
 try:
     from dotenv import load_dotenv
 except ImportError:  # pragma: no cover - optional dependency in local dev
@@ -25,15 +30,24 @@ from .config import MODEL_VECTOR_SIZE
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parents[2] / ".env")
 
-USER = os.getenv("POSTGRES_USER", "postgres")
-PASSWORD = os.getenv("POSTGRES_PASS", "postgres")
-DB = os.getenv("POSTGRES_DB", "finalyze")
-PORT = os.getenv("POSTGRES_PORT", "5432")
-HOST = os.getenv(
-    "POSTGRES_HOST",
-    "db" if os.getenv("IS_DOCKER", "").lower() in {"1", "true", "yes", "on"} else "localhost",
-)
-POSTGRES_URL = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB}"
+EXTERNAL_URL = os.getenv("EXTERNAL_URL")
+
+if EXTERNAL_URL and EXTERNAL_URL.strip():
+    POSTGRES_URL = EXTERNAL_URL.strip()
+    logger.info("External URL Connected")
+else:
+    USER = os.getenv("POSTGRES_USER", "postgres")
+    PASSWORD = os.getenv("POSTGRES_PASS", "postgres")
+    DB = os.getenv("POSTGRES_DB", "finalyze")
+    PORT = os.getenv("POSTGRES_PORT", "5432")
+    HOST = os.getenv(
+        "POSTGRES_HOST",
+        "db" if os.getenv("IS_DOCKER", "").lower() in {"1", "true", "yes", "on"} else "localhost",
+    )
+    POSTGRES_URL = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB}"
+    
+    logger.info("Local Postgres Connected")
+
 SQLITE_URL = "sqlite:///./finalyze.db"
 
 try:
