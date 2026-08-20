@@ -28,6 +28,7 @@ class ChunkItem(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str
+    previous_conversation: list[dict[str, str]] = Field(default_factory=list)
 
 
 class ChatResponse(BaseModel):

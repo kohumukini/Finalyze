@@ -30,8 +30,11 @@ limiter = Limiter(key_func=get_remote_address, default_limits=[RATE_LIMIT])
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Initializing database schema during startup.")
-    init_db()
-    logger.info("Database schema ready.")
+    try: 
+        init_db()
+        logger.info("Database schema ready.")
+    except Exception as e:
+        logger.error(f"Database failed to initialize: {e}")
     yield
 
 app = FastAPI(title="Finalyze RAG Backend", docs_url=None, redoc_url=None, lifespan = lifespan)

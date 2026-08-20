@@ -28,40 +28,26 @@ except ImportError:  # pragma: no cover - optional dependency in local dev
 
 from .config import MODEL_VECTOR_SIZE
 
-load_dotenv(dotenv_path=Path(__file__).resolve().parents[2] / ".env")
+load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent.parent / ".env")
 
 EXTERNAL_URL = os.getenv("EXTERNAL_URL")
 
-if EXTERNAL_URL and EXTERNAL_URL.strip():
-    POSTGRES_URL = EXTERNAL_URL.strip()
-    logger.info("External URL Connected")
-else:
-    USER = os.getenv("POSTGRES_USER", "postgres")
-    PASSWORD = os.getenv("POSTGRES_PASS", "postgres")
-    DB = os.getenv("POSTGRES_DB", "finalyze")
-    PORT = os.getenv("POSTGRES_PORT", "5432")
-    HOST = os.getenv(
-        "POSTGRES_HOST",
-        "db" if os.getenv("IS_DOCKER", "").lower() in {"1", "true", "yes", "on"} else "localhost",
-    )
-    POSTGRES_URL = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB}"
-    
-    logger.info("Local Postgres Connected")
+if not EXTERNAL_URL: 
+    raise ValueError("EXTERNAL_URL environment var not set")
 
-SQLITE_URL = "sqlite:///./finalyze.db"
+try: 
+    ENGINE = create_engine(EXTERNAL_URL)
+    SessionLocal = sessionmaker(ENGINE)
+except Exception as e: 
+    logger.error(f"Postgres database connection failed: {e}")
+    raise
 
-try:
-    ENGINE = create_engine(POSTGRES_URL)
-except Exception:
-    ENGINE = create_engine(SQLITE_URL)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=ENGINE)
 
 class Base(DeclarativeBase):
     pass
 
 
-metadata_column_type = JSONB if ENGINE.dialect.name == "postgresql" else JSON
+metadata_column_type = JSONB
 
 
 class Documents(Base):
@@ -93,7 +79,6 @@ class Chunks(Base):
 
 def init_db():
     Base.metadata.create_all(bind=ENGINE)
-    return ENGINE
 
 
 def get_db_session():
