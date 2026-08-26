@@ -27,7 +27,7 @@ def chat(request: Request, payload: ChatRequest, db: Session = Depends(get_db_se
     logger.info("Received chat request")
 
     if not GROQ_API_KEY:
-        logger.warning("Groq API key unavailable; falling back to echo mode")
+        logger.error("Groq API key unavailable; falling back to echo mode")
         return ChatResponse(response=f"Echo: {user_message}")
 
     context = json.dumps(load_chunks(), indent=4)

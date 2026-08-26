@@ -34,7 +34,7 @@ async def lifespan(app: FastAPI):
         init_db()
         logger.info("Database schema ready.")
     except Exception as e:
-        logger.error(f"Database failed to initialize: {e}")
+        logger.critical(f"Database failed to initialize: {e}")
     yield
 
 app = FastAPI(title="Finalyze RAG Backend", docs_url=None, redoc_url=None, lifespan = lifespan)

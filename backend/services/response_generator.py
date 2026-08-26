@@ -8,11 +8,7 @@ except ImportError:
 	Groq = None
 
 
-def generate_response(
-	context: str,
-	previous_conversation: list[dict[str, str]],
-	groq_api_key: str | None,
-) -> str:
+def generate_response(context: str, previous_conversation: list[dict[str, str]], groq_api_key: str | None, ) -> str:
 	if Groq is None or not groq_api_key:
 		raise RuntimeError("Groq client is unavailable")
 
