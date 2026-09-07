@@ -47,17 +47,12 @@ else:
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = BASE_DIR / "frontend"
 
-allowed_origins = [
-    "http://localhost:3000", 
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
-    FRONTEND_URL
-]
+allowed_origins = cors_origins
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_credentials=cors_origins != ["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import JSON, Text, create_engine, func, ForeignKey, String
+from sqlalchemy import JSON, Text, create_engine, func, ForeignKey, String, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker, relationship
 
@@ -53,7 +53,7 @@ metadata_column_type = JSONB
 class Documents(Base):
     __tablename__ = "documents"
 
-    documents_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    document_id: Mapped[int] = mapped_column("document_id", primary_key=True, autoincrement=True)
     
     timestamp: Mapped[datetime] = mapped_column(default=func.now())
     
@@ -68,7 +68,7 @@ class Chunks(Base):
 
     chunk_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     
-    document_id: Mapped[int] = mapped_column(ForeignKey("documents.documents_id"))
+    document_id: Mapped[int] = mapped_column(ForeignKey("documents.document_id"))
     content: Mapped[str] = mapped_column(Text)
     
     embedding: Mapped[list[float]] = mapped_column(VECTOR(MODEL_VECTOR_SIZE))
@@ -78,7 +78,9 @@ class Chunks(Base):
 
 
 def init_db():
-    Base.metadata.create_all(bind=ENGINE)
+    with ENGINE.begin() as connection:
+        connection.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+        Base.metadata.create_all(bind=connection)
 
 
 def get_db_session():

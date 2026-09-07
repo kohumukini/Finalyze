@@ -1,5 +1,3 @@
-import json
-
 from fastapi import APIRouter, Depends, HTTPException, Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -9,8 +7,8 @@ from ..core.config import GROQ_API_KEY, RATE_LIMIT
 from ..core.database import get_db_session
 from ..core.logger import get_logger
 from ..core.schema import ChatRequest, ChatResponse
-from ..services.ingest import load_chunks
 from ..services.response_generator import generate_response
+from ..services.search import retrieve_text
 
 logger = get_logger(__name__)
 
@@ -30,7 +28,7 @@ def chat(request: Request, payload: ChatRequest, db: Session = Depends(get_db_se
         logger.error("Groq API key unavailable; falling back to echo mode")
         return ChatResponse(response=f"Echo: {user_message}")
 
-    context = json.dumps(load_chunks(), indent=4)
+    context = "\n\n".join(retrieve_text(user_message, db))
     conversation = [
         *payload.previous_conversation,
         {"role": "user", "content": user_message},
