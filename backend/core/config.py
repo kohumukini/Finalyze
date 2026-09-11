@@ -12,7 +12,7 @@ load_dotenv(dotenv_path=Path(__file__).resolve().parents[2] / ".env")
 
 # LLM model
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_MODEL = "openai/gpt-oss-120b"
 
 # Embedding Model
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
@@ -31,5 +31,5 @@ RATE_LIMIT = os.getenv("RATE_LIMIT", "5/minute")
 CORS_ALLOW_ORIGINS = os.getenv("CORS_ALLOW_ORIGINS", "*")
 
 # Model generation defaults
-DEFAULT_TEMPERATURE = float(os.getenv("DEFAULT_TEMPERATURE", "0.7"))
-MAX_TOKENS = int(os.getenv("MAX_TOKENS", "300"))
+DEFAULT_TEMPERATURE = float(os.getenv("DEFAULT_TEMPERATURE", "0.1"))
+MAX_TOKENS = int(os.getenv("MAX_TOKENS", "1000"))

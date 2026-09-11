@@ -2,11 +2,16 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import JSON, Text, create_engine, func, ForeignKey, String
+from sqlalchemy import JSON, Text, create_engine, func, ForeignKey, String, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker, relationship
 
 from pgvector.sqlalchemy import VECTOR
+
+from .logger import get_logger, configure_logging
+
+configure_logging()
+logger = get_logger(__name__)
 
 try:
     from dotenv import load_dotenv
@@ -23,39 +28,32 @@ except ImportError:  # pragma: no cover - optional dependency in local dev
 
 from .config import MODEL_VECTOR_SIZE
 
-load_dotenv(dotenv_path=Path(__file__).resolve().parents[2] / ".env")
-
-USER = os.getenv("POSTGRES_USER", "postgres")
-PASSWORD = os.getenv("POSTGRES_PASS", "postgres")
-DB = os.getenv("POSTGRES_DB", "finalyze")
-PORT = os.getenv("POSTGRES_PORT", "5432")
-HOST = "db" if os.getenv("IS_DOCKER") else "localhost"
+load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent.parent / ".env")
 
 EXTERNAL_URL = os.getenv("EXTERNAL_URL")
 
-# Prefer the external Render/Postgres DSN when the workspace env provides one.
-# Otherwise, fall back to the standard container/local assembly used in this repo.
-POSTGRES_URL = EXTERNAL_URL or f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB}"
-SQLITE_URL = "sqlite:///./finalyze.db"
+if not EXTERNAL_URL: 
+    raise ValueError("EXTERNAL_URL environment var not set")
 
-try:
-    ENGINE = create_engine(POSTGRES_URL)
-except Exception:
-    ENGINE = create_engine(SQLITE_URL)
+try: 
+    ENGINE = create_engine(EXTERNAL_URL)
+    SessionLocal = sessionmaker(ENGINE)
+except Exception as e: 
+    logger.error(f"Postgres database connection failed: {e}")
+    raise
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=ENGINE)
 
 class Base(DeclarativeBase):
     pass
 
 
-metadata_column_type = JSONB if ENGINE.dialect.name == "postgresql" else JSON
+metadata_column_type = JSONB
 
 
 class Documents(Base):
     __tablename__ = "documents"
 
-    documents_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    document_id: Mapped[int] = mapped_column("document_id", primary_key=True, autoincrement=True)
     
     timestamp: Mapped[datetime] = mapped_column(default=func.now())
     
@@ -70,7 +68,7 @@ class Chunks(Base):
 
     chunk_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     
-    document_id: Mapped[int] = mapped_column(ForeignKey("documents.documents_id"))
+    document_id: Mapped[int] = mapped_column(ForeignKey("documents.document_id"))
     content: Mapped[str] = mapped_column(Text)
     
     embedding: Mapped[list[float]] = mapped_column(VECTOR(MODEL_VECTOR_SIZE))
@@ -80,7 +78,9 @@ class Chunks(Base):
 
 
 def init_db():
-    Base.metadata.create_all(bind=ENGINE)
+    with ENGINE.begin() as connection:
+        connection.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+        Base.metadata.create_all(bind=connection)
 
 
 def get_db_session():

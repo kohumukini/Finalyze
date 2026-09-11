@@ -62,7 +62,7 @@ def add_document(payload: DocumentCreateRequest, db: Session = Depends(get_db_se
 @router.get("/{document_name}", response_model=DocumentItem)
 def get_document_by_name(document_name: str, db: Session = Depends(get_db_session)):
     try:
-        statement = db.select(Documents).where(Documents.metadata["name"].astext == document_name)
+        statement = select(Documents).where(Documents.metadata_["name"].astext == document_name)
         document = db.execute(statement).scalar_one_or_none()
 
         if document is None:
