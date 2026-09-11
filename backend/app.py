@@ -14,9 +14,10 @@ from slowapi.util import get_remote_address
 
 from .core.config import CORS_ALLOW_ORIGINS, RATE_LIMIT
 from .core.logger import configure_logging, get_logger
-from .core.database import init_db
+from .core.database import init_db, SessionLocal
 from .routers.chat import router as chat_router
 from .routers.documents import router as documents_router
+from .services.ingest import ingest_documents
 
 from contextlib import asynccontextmanager
 
@@ -29,10 +30,10 @@ limiter = Limiter(key_func=get_remote_address, default_limits=[RATE_LIMIT])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Initializing database schema during startup.")
+    logger.info("Initializing database.")
     try: 
         init_db()
-        logger.info("Database schema ready.")
+        logger.info("Database ready.")
     except Exception as e:
         logger.critical(f"Database failed to initialize: {e}")
     yield

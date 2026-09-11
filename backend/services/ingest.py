@@ -4,7 +4,7 @@ from pathlib import Path
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from ..core.database import Chunks, Documents
+from ..core.database import Chunks, Documents, SessionLocal
 from .embed import embed_chunks
 from .chunk import chunk_doc
 
@@ -66,3 +66,8 @@ def ingest_documents(db: Session) -> int:
 
     db.commit()
     return ingested_chunks
+
+if __name__ == "__main__": 
+    with SessionLocal() as db: 
+        ingested_chunks = ingest_documents(db)
+        

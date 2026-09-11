@@ -31,4 +31,4 @@ CORS_ALLOW_ORIGINS = os.getenv("CORS_ALLOW_ORIGINS", "*")
 
 # Model generation defaults
 DEFAULT_TEMPERATURE = float(os.getenv("DEFAULT_TEMPERATURE", "0.1"))
-MAX_TOKENS = int(os.getenv("MAX_TOKENS", "300"))
+MAX_TOKENS = int(os.getenv("MAX_TOKENS", "1000"))
