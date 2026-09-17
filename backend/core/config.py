@@ -10,9 +10,14 @@ except ImportError:  # pragma: no cover - optional dependency in local dev
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parents[2] / ".env")
 
-# LLM model
+# LLM models
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+# Primary Chatting Model
 GROQ_MODEL = "openai/gpt-oss-120b"
+
+# Binary Decision & Query Re-writes
+GROQ_HELPER_MODEL = "openai/gpt-oss-20b"
 
 # Embedding Model
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
