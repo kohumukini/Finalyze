@@ -13,8 +13,8 @@ class DocumentMetadata(BaseModel):
     extras: dict[str, Any] = Field(default_factory=dict)
     
 class ChunkMetadata(BaseModel):
-    source_name: Optional[str]
-    chunk_index = int
+    source_name: Optional[str] = None
+    chunk_index: int
     extras: dict[str, Any] = Field(default_factory=dict)
 
 # =============================================================================
@@ -52,12 +52,12 @@ class ChunkItem(BaseModel):
 
 class ChatMessage(BaseModel): 
     role: str = Field(description="Roles: Assistant, System, ")
-    content = str
-    metadata = dict[str, any] = Field(default_factor=dict)
+    content: str
+    metadata: dict[str, any] = Field(default_factor=dict)
 
 class ChatRequest(BaseModel):
     message: str
-    previous_conversation: list[ChatMessage] = Field(default_factory=ChatMessage)
+    previous_conversation: list[ChatMessage] = Field(default_factory=list)
 
 
 class ChatResponse(BaseModel):

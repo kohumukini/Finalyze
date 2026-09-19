@@ -2,8 +2,8 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import JSON, Text, create_engine, func, ForeignKey, String, text
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Text, create_engine, func, ForeignKey, String, text, Integer
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker, relationship
 
 from pgvector.sqlalchemy import VECTOR
@@ -54,7 +54,7 @@ class Documents(Base):
     __tablename__ = "documents"
 
     document_id: Mapped[int] = mapped_column("document_id", primary_key=True, autoincrement=True)
-    
+    document_name: Mapped[str] = mapped_column(String)
     timestamp: Mapped[datetime] = mapped_column(default=func.now())
     
     content: Mapped[str] = mapped_column(Text)
@@ -68,7 +68,7 @@ class Chunks(Base):
 
     chunk_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     
-    document_id: Mapped[int] = mapped_column(ForeignKey("documents.document_id"))
+    document_id: Mapped[int] = mapped_column(ForeignKey("documents.document_id"), ondelete = "CASCADE")
     content: Mapped[str] = mapped_column(Text)
     
     embedding: Mapped[list[float]] = mapped_column(VECTOR(MODEL_VECTOR_SIZE))
@@ -76,6 +76,30 @@ class Chunks(Base):
     
     document: Mapped["Documents"] = relationship("Documents", back_populates="chunks")
 
+class ChatMessageTable(Base): 
+    __tablename__ = "chat_history"
+    
+    message_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    session_id: Mapped[int] = mapped_column(
+        ForeignKey("chat_sessions.chat_id", ondelete="CASCADE"), index=True
+    )
+    role: Mapped[str] = mapped_column(String)
+    content: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
+    
+    session: Mapped["ChatSessionTable"] = relationship("ChatSessionTable", back_populates="message_history")
+    
+class ChatSessionTable(Base): 
+    __tablename__ = "chat_sessions"
+    
+    chat_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    session_id: Mapped[int] = mapped_column(nullable=False)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
+    
+    message_history: Mapped[list[ChatMessageTable]] = relationship(
+        "ChatMessageTable", back_populates="session"
+    )
 
 def init_db():
     with ENGINE.begin() as connection:
