@@ -3,7 +3,7 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from sqlalchemy.orm import Session
 
-from ..core.config import GROQ_API_KEY, RATE_LIMIT
+from ..core.config import GROQ_API_KEY, RATE_LIMIT, CHAT_HISTORY_LIMIT
 from ..core.database import get_db_session
 from ..core.logger import get_logger
 from ..core.schema import ChatRequest, ChatResponse

@@ -63,3 +63,9 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
     
+class ModelDecision(BaseModel): 
+    needs_rag: bool = Field(
+        descriptions="If the model decides True, this means RAG is necessary to answer the user's question. Otherwise RAG is unnecessary"
+    )
+    
+    
