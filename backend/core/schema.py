@@ -53,7 +53,7 @@ class ChunkItem(BaseModel):
 class ChatMessage(BaseModel): 
     role: str = Field(description="Roles: Assistant, System, ")
     content: str
-    metadata: dict[str, any] = Field(default_factor=dict)
+    metadata: dict[str, Any] = Field(default_factor=dict)
 
 class ChatRequest(BaseModel):
     message: str

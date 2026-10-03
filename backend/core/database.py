@@ -68,7 +68,7 @@ class Chunks(Base):
 
     chunk_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     
-    document_id: Mapped[int] = mapped_column(ForeignKey("documents.document_id"), ondelete = "CASCADE")
+    document_id: Mapped[int] = mapped_column(ForeignKey("documents.document_id", ondelete = "CASCADE"))
     content: Mapped[str] = mapped_column(Text)
     
     embedding: Mapped[list[float]] = mapped_column(VECTOR(MODEL_VECTOR_SIZE))

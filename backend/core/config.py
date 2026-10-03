@@ -14,18 +14,16 @@ load_dotenv(dotenv_path=Path(__file__).resolve().parents[2] / ".env")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Primary Chatting Model
-GROQ_MODEL = "openai/gpt-oss-120b"
+GROQ_MODEL = os.getenv("GROQ_CHAT_MODEL", "openai/gpt-oss-120b")
 
 # Binary Decision & Query Re-writes
-GROQ_HELPER_MODEL = "openai/gpt-oss-20b"
+GROQ_HELPER_MODEL = os.getenv("HELPER_MODEL", "llama-3.1-8b-instant")
 
 # Embedding Model
-EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 MODEL_VECTOR_SIZE = 384
 
 # RAG Configurations
 MAX_CHUNK_SIZE = 500
-MIN_CHUNK_SIZE = 125
 OVERLAP_SIZE = 100
 CHAT_HISTORY_LIMIT = 10
 
@@ -39,3 +37,7 @@ CORS_ALLOW_ORIGINS = os.getenv("CORS_ALLOW_ORIGINS", "*")
 # Model generation defaults
 DEFAULT_TEMPERATURE = float(os.getenv("DEFAULT_TEMPERATURE", "0.1"))
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "1000"))
+
+# Hugging Face
+HUGGING_FACE_TOKEN = os.getenv("HUGGING_FACE_ACCESS_TOKEN")
+HUGGING_FACE_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")

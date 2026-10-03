@@ -25,18 +25,6 @@ def load_documents():
     print(f"Loaded {len(documents)} document(s)")
     return documents
 
-def load_chunks(): 
-    docs = load_documents()
-    
-    chunked_docs = []
-    
-    for doc in docs: 
-        chunked_docs.append({
-            "filename": doc["filename"],
-            "content": chunk_doc(doc["text"])
-        })
-    return chunked_docs
-
 def ingest_documents(db: Session) -> int:
     """Replace the database copy of local text documents and their embeddings."""
     ingested_chunks = 0

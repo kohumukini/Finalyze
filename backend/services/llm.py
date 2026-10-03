@@ -32,7 +32,7 @@ def generate_response(messages: list[dict]) -> str:
 
     return response.choices[0].message.content.strip()
 
-def text_to_xml(tag_name: str, content: str, attributes: Optional[dict[str, Any]]): 
+def text_to_xml(tag_name: str, content: str, attributes: Optional[dict[str, Any]] = None): 
     """General Utility: Wrap any text in xml formatting"""
     if not content.strip(): 
         return "" 
@@ -64,7 +64,7 @@ def xml_prompt_builder(chunks: list[ChunkItem], user_prompt: str):
     prompt_blocks = [
         retrieved_content, 
         f"<user_query>\n{user_prompt}\n</user_query>", 
-        "Instructions: Answer the <user_query> using ONLY information from <retrieved_context>. If the context does not contain the ansewr, state that you do not know. "
+        "Instructions: Answer the <user_query> using ONLY information from <retrieved_context>. If the context does not contain the answer, state that you do not know. "
     ]
     
     return "\n\n".join(prompt_blocks)
