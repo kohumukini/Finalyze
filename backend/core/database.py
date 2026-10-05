@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import JSON, Text, create_engine, func, ForeignKey, String, text
+from sqlalchemy import Text, create_engine, func, ForeignKey, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker, relationship
 
@@ -19,13 +19,6 @@ except ImportError:  # pragma: no cover - optional dependency in local dev
     def load_dotenv(*args, **kwargs):
         return False
 
-try:
-    from pgvector import Vector
-except ImportError:  # pragma: no cover - optional dependency in local dev
-    class Vector:  # type: ignore[no-redef]
-        def __init__(self, dimensions):
-            self.dimensions = dimensions
-
 from .config import MODEL_VECTOR_SIZE
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent.parent / ".env")
@@ -36,7 +29,9 @@ if not EXTERNAL_URL:
     raise ValueError("EXTERNAL_URL environment var not set")
 
 try: 
-    ENGINE = create_engine(EXTERNAL_URL)
+    # SQLAlchemy 2 rejects the legacy "postgres://" scheme that some hosts (e.g. Render) still hand out
+    # pool_pre_ping drops connections the host closed while idle
+    ENGINE = create_engine(EXTERNAL_URL.replace("postgres://", "postgresql://", 1), pool_pre_ping=True)
     SessionLocal = sessionmaker(ENGINE)
 except Exception as e: 
     logger.error(f"Postgres database connection failed: {e}")

@@ -4,10 +4,12 @@ from pathlib import Path
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from ..core.database import Chunks, Documents, SessionLocal
+from ..core.database import Chunks, Documents, SessionLocal, init_db
+from ..core.logger import configure_logging, get_logger
 from .embed import embed_chunks
 from .chunk import chunk_doc
 
+logger = get_logger(__name__)
 DOCS_DIR = Path(__file__).resolve().parents[2] / "docs"
 
 def load_documents(): 
@@ -22,26 +24,14 @@ def load_documents():
                 "text": text
             })
             
-    print(f"Loaded {len(documents)} document(s)")
+    logger.info("Loaded %d document(s)", len(documents))
     return documents
-
-def load_chunks(): 
-    docs = load_documents()
-    
-    chunked_docs = []
-    
-    for doc in docs: 
-        chunked_docs.append({
-            "filename": doc["filename"],
-            "content": chunk_doc(doc["text"])
-        })
-    return chunked_docs
 
 def ingest_documents(db: Session) -> int:
     """Replace the database copy of local text documents and their embeddings."""
     ingested_chunks = 0
     for document_data in load_documents():
-        chunks = chunk_doc(document_data["text"])
+        chunks = [c for c in chunk_doc(document_data["text"]) if c]
         document = db.execute(
             select(Documents).where(Documents.metadata_["name"].astext == document_data["filename"])
         ).scalar_one_or_none()
@@ -67,7 +57,8 @@ def ingest_documents(db: Session) -> int:
     db.commit()
     return ingested_chunks
 
-if __name__ == "__main__": 
-    with SessionLocal() as db: 
-        ingested_chunks = ingest_documents(db)
-        
+if __name__ == "__main__":
+    configure_logging()
+    init_db()
+    with SessionLocal() as db:
+        logger.info("Ingested %d chunk(s)", ingest_documents(db))

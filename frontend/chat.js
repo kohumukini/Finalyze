@@ -40,16 +40,18 @@ chatForm.addEventListener('submit', async (event) => {
       body: JSON.stringify({ message }),
     });
 
-    if (response.status == 429) {
-      alert("Rate limit exceeded. Please try again in a few minutes.");
-      return;
-    }
+    thinkingBubble.remove();
 
-    const data = await response.json();
-    chatConversation.removeChild(thinkingBubble);
-    createBubble(data.response, 'llm');
+    if (response.status === 429) {
+      createBubble('Rate limit exceeded. Please try again in a few minutes.', 'llm');
+    } else if (!response.ok) {
+      createBubble('Something went wrong generating a response. Please try again.', 'llm');
+    } else {
+      const data = await response.json();
+      createBubble(data.response, 'llm');
+    }
   } catch (error) {
-    chatConversation.removeChild(thinkingBubble);
+    thinkingBubble.remove();
     createBubble('Unable to reach the chat backend.', 'llm');
   }
 });

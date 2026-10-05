@@ -27,4 +27,4 @@ def generate_response(messages: list[dict]) -> str:
         max_tokens=MAX_TOKENS,
     )
 
-    return response.choices[0].message.content.strip()
+    return (response.choices[0].message.content or "").strip()

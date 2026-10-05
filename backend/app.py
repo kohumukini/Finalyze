@@ -14,10 +14,9 @@ from slowapi.util import get_remote_address
 
 from .core.config import CORS_ALLOW_ORIGINS, RATE_LIMIT
 from .core.logger import configure_logging, get_logger
-from .core.database import init_db, SessionLocal
+from .core.database import init_db
 from .routers.chat import router as chat_router
 from .routers.documents import router as documents_router
-from .services.ingest import ingest_documents
 
 from contextlib import asynccontextmanager
 

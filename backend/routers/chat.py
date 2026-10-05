@@ -28,17 +28,18 @@ def chat(request: Request, payload: ChatRequest, db: Session = Depends(get_db_se
         logger.error("Groq API key unavailable; falling back to echo mode")
         return ChatResponse(response=f"Echo: {user_message}")
 
-    context = "\n\n".join(retrieve_text(user_message, db))
+    # Clients may only supply user/assistant turns; a forged "system" turn would override the prompt
     conversation = [
-        *payload.previous_conversation,
+        *(m for m in payload.previous_conversation if m.get("role") in {"user", "assistant"}),
         {"role": "user", "content": user_message},
     ]
 
     try:
-        assistant_response_text = generate_response(context, conversation, GROQ_API_KEY)
+        context = "\n\n".join(retrieve_text(user_message, db))
+        assistant_response_text = generate_response(context, conversation)
         logger.info("Groq chat completed successfully")
     except Exception as exc:
-        logger.error("Groq chat failed: %s", exc, exc_info=True)
+        logger.error("Chat pipeline failed: %s", exc, exc_info=True)
         raise HTTPException(status_code=502, detail="Unable to generate a response.") from exc
 
     return ChatResponse(response=assistant_response_text)

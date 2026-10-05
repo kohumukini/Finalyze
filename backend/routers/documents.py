@@ -31,7 +31,7 @@ def list_documents(db: Session = Depends(get_db_session)):
     except SQLAlchemyError as exc:
         db.rollback()
         logger.error("Error fetching documents: %s", exc, exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to fetch documents: {exc}") from exc
+        raise HTTPException(status_code=500, detail="Failed to fetch documents.") from exc
 
 
 @router.put("", response_model=DocumentItem, status_code=status.HTTP_201_CREATED)
@@ -56,7 +56,7 @@ def add_document(payload: DocumentCreateRequest, db: Session = Depends(get_db_se
     except SQLAlchemyError as exc:
         db.rollback()
         logger.error("Error creating document '%s': %s", payload.document_name, exc, exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to create document: {exc}") from exc
+        raise HTTPException(status_code=500, detail="Failed to create document.") from exc
 
 
 @router.get("/{document_name}", response_model=DocumentItem)
@@ -80,4 +80,4 @@ def get_document_by_name(document_name: str, db: Session = Depends(get_db_sessio
     except SQLAlchemyError as exc:
         db.rollback()
         logger.error("Error fetching document '%s': %s", document_name, exc, exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to fetch document: {exc}") from exc
+        raise HTTPException(status_code=500, detail="Failed to fetch document.") from exc

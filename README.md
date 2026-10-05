@@ -51,7 +51,7 @@ The primary goal was to design, develop, and deploy a fully functional RAG syste
   +-----------------+                               |            v
                                                     |   +------------------+
                                                     +-->| Groq API         |
-                                                        | (Llama 3.3)      |
+                                                        | (gpt-oss-120b)   |
                                                         +------------------+
                                                           3. Send Context +
                                                              User Prompt
@@ -62,7 +62,8 @@ The primary goal was to design, develop, and deploy a fully functional RAG syste
 |---|---|
 | **Frontend** | <span style="color: gray">React, Typescript, Tailwind CSS, Vite</span> - HTML, CSS, JavavScript
 | **Backend**  | Python, FastAPI, SQLAlchemy
-| **Database** | PostgreSQL
+| **Database** | PostgreSQL + pgvector
+| **Embeddings** | HuggingFace Inference API (all-MiniLM-L6-v2)
 | **Deployment** | Render
 
 ## Features
