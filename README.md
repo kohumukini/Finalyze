@@ -70,10 +70,11 @@ The primary goal was to design, develop, and deploy a fully functional RAG syste
 
 ## Roadmap
 
-- [] Build & attach vectordb
-- [] Allow for document uploads & storage
-- [] Implement pdf parsing & improve chunking system
+- [x] Build & attach vectordb
+~~- [] Allow for document uploads & storage~~
+~~- [] Implement pdf parsing & improve chunking system~~
 - [] Convert to React/TypeScript building components and type validation
 - [] Implement personal dashboard with stats
 - [] Build user sections & google login system
-- [] Finish UI touches
+- [] 
+- Finish UI touches

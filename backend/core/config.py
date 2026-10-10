@@ -15,15 +15,14 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = os.getenv("GROQ_CHAT_MODEL", "openai/gpt-oss-120b")
 
 # Embedding Model (served by the HuggingFace Inference API, not run locally)
-# HUGGGING_FACE_ACCESS_TOKEN is kept as a fallback for the original misspelled .env key
-HF_TOKEN = os.getenv("HUGGING_FACE_ACCESS_TOKEN") or os.getenv("HUGGGING_FACE_ACCESS_TOKEN")
+# _FACE_ACCESS_TOKEN is kept as a fallback for the original misspelled .env key
+HF_TOKEN = os.getenv("HUGGING_FACE_ACCESS_TOKEN")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 HF_EMBEDDING_URL = f"https://router.huggingface.co/hf-inference/models/{EMBEDDING_MODEL}/pipeline/feature-extraction"
 MODEL_VECTOR_SIZE = 384
 
 # RAG Configurations
 MAX_CHUNK_SIZE = 500
-MIN_CHUNK_SIZE = 125
 OVERLAP_SIZE = 100
 
 # Rate limiting

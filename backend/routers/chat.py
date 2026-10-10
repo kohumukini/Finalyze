@@ -29,14 +29,11 @@ def chat(request: Request, payload: ChatRequest, db: Session = Depends(get_db_se
         return ChatResponse(response=f"Echo: {user_message}")
 
     # Clients may only supply user/assistant turns; a forged "system" turn would override the prompt
-    conversation = [
-        *(m for m in payload.previous_conversation if m.get("role") in {"user", "assistant"}),
-        {"role": "user", "content": user_message},
-    ]
+    history = [m for m in payload.previous_conversation if m.get("role") in {"user", "assistant"}]
 
     try:
-        context = "\n\n".join(retrieve_text(user_message, db))
-        assistant_response_text = generate_response(context, conversation)
+        chunks = retrieve_text(user_message, db)
+        assistant_response_text = generate_response(chunks, history, user_message)
         logger.info("Groq chat completed successfully")
     except Exception as exc:
         logger.error("Chat pipeline failed: %s", exc, exc_info=True)
