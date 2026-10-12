@@ -13,6 +13,7 @@ load_dotenv(dotenv_path=Path(__file__).resolve().parents[2] / ".env")
 # LLM model
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = os.getenv("GROQ_CHAT_MODEL", "openai/gpt-oss-120b")
+GROQ_GATEKEEPER_MODEL = os.getenv("HELPER_MODEL", "openai/gpt-oss-20b")
 
 # Embedding Model (served by the HuggingFace Inference API, not run locally)
 # _FACE_ACCESS_TOKEN is kept as a fallback for the original misspelled .env key
@@ -34,4 +35,4 @@ CORS_ALLOW_ORIGINS = os.getenv("CORS_ALLOW_ORIGINS") or os.getenv("CORS_ALLOWED_
 
 # Model generation defaults
 DEFAULT_TEMPERATURE = float(os.getenv("DEFAULT_TEMPERATURE", "0.1"))
-MAX_TOKENS = int(os.getenv("MAX_TOKENS", "1000"))
+MAX_TOKENS = int(os.getenv("MAX_TOKENS", "3000"))
