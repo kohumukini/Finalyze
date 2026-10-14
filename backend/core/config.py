@@ -15,12 +15,12 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = os.getenv("GROQ_CHAT_MODEL", "openai/gpt-oss-120b")
 GROQ_GATEKEEPER_MODEL = os.getenv("HELPER_MODEL", "openai/gpt-oss-20b")
 
-# Embedding Model (served by the HuggingFace Inference API, not run locally)
-# _FACE_ACCESS_TOKEN is kept as a fallback for the original misspelled .env key
-HF_TOKEN = os.getenv("HUGGING_FACE_ACCESS_TOKEN")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
-HF_EMBEDDING_URL = f"https://router.huggingface.co/hf-inference/models/{EMBEDDING_MODEL}/pipeline/feature-extraction"
-MODEL_VECTOR_SIZE = 384
+# Embedding Model (Gemini API)
+GOOGLE_KEY = os.getenv("GEMINI_API_KEY")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "gemini-embedding-2")
+# Single source of truth: sizes the pgvector column AND the Gemini output_dimensionality.
+# Changing it requires dropping document_chunks and re-ingesting.
+EMBEDDING_DIMENSIONS = 768
 
 # RAG Configurations
 MAX_CHUNK_SIZE = 500

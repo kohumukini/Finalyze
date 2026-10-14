@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 logger = get_logger(__name__)
 
 def retrieve_text(user_prompt: str, db: Session, top_k: int = 4) -> list[str]:
-    query_embedding = embed_chunks(user_prompt)
+    query_embedding = embed_chunks([user_prompt])[0]
     statement = (
         select(Chunks)
         .order_by(Chunks.embedding.cosine_distance(query_embedding))

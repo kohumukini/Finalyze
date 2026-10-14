@@ -1,23 +1,26 @@
 from datetime import datetime
 from typing import Any, Literal, Annotated
 
-from pydantic import BaseModel, Field, TypeAdapter, StringConstraints, BeforeValidator
+from pydantic import BaseModel, Field, TypeAdapter, StringConstraints, AfterValidator
 
-from .utils.validators import clean_and_dedupe_strings
+from .utils.validators import dedupe_strings
 
 TrimmedShortStr = Annotated[
     str,
     StringConstraints(
         strip_whitespace=True,
         min_length=1,
-        max_length=500
+        max_length=400
     )
 ]
 
+# 0-3 extra search queries (main_query is the 4th). Order of checks: each item is stripped and must be
+# non-empty -> repeats are dropped (case-insensitive) -> the list is length-checked (max 3).
+# Wrong types fail validation.
 UniqueCleanList = Annotated[
     list[TrimmedShortStr],
-    BeforeValidator(clean_and_dedupe_strings), 
-    Field(min_length=1, max_length=4)
+    AfterValidator(dedupe_strings),
+    Field(max_length=3)
 ]
 
 # A stored document as returned by the /docs endpoints (list, get by name, and the PUT response).
@@ -61,12 +64,12 @@ class Message(BaseModel):
 # message: the user's new question.
 # previous_conversation: earlier turns, oldest first, capped at 10.
 class ChatRequest(BaseModel):
-    message: str
+    message: str = Field(min_length=1, max_length=1000)
     previous_conversation: list[Message] = Field(default_factory=list, max_length=10)
 
 # HTTP OUT (nested) - one passage the answer cites. Built by the backend from chunks the model
 # actually cited, never written by the model.
-# id: the [n] label used inside the response text, so a "[3]" in the text maps to the Source with id 3. Equivalent to 'chunk id'
+# id: the [n] label used inside the response text, so a "[3]" in the text maps to the Source with id 3
 # document_name / section: passage citation (e.g. "Coca-Cola FY2023 10-K", "Item 7").
 # exerpt: chunk text, so the UI can show what the answer was based on.
 class Source(BaseModel):
@@ -97,11 +100,11 @@ class Direct(BaseModel):
     message: TrimmedShortStr
 
 # GATEKEEPER OUTPUT (LLM JSON, not HTTP) - the question needs the documents, so retrieval runs.
-# Carries the text the retrieval step searches with. Sent back with route="rag" after the main model answers.
+# main_query: the user's question rewritten to stand alone. sub_queries: 0-3 extra searches ([] when not needed).
 class RAG(BaseModel):
     route: Literal['rag']
     main_query: TrimmedShortStr
-    sub_queries: UniqueCleanList = []
+    sub_queries: UniqueCleanList | None = Field(default_factory=list)
 
 GatekeeperDecision = Annotated[Refuse | Direct | RAG, Field(discriminator='route')]
 gatekeeper_adapter = TypeAdapter(GatekeeperDecision)

@@ -1,30 +1,66 @@
 from groq import Groq
 
-from ..core.config import DEFAULT_TEMPERATURE, GROQ_API_KEY, GROQ_MODEL, MAX_TOKENS
+from typing import Literal
+
+from ..core.config import DEFAULT_TEMPERATURE, GROQ_API_KEY, GROQ_GATEKEEPER_MODEL, GROQ_MODEL, MAX_TOKENS
 from ..core.logger import get_logger
+
+from dataclasses import dataclass
+@dataclass(frozen=True)
+class ModelProfile: 
+    model: str
+    max_tokens: int
+    temperature: float
+    reasoning_effort: Literal["low", "medium", "high"]
+    timeout: float
+    
+
+GENERATOR = ModelProfile(
+    GROQ_MODEL, 
+    MAX_TOKENS, 
+    DEFAULT_TEMPERATURE, 
+    "medium", 
+    60.0
+)
+
+GATEKEEPER = ModelProfile(
+    GROQ_GATEKEEPER_MODEL,
+    max_tokens=1000,
+    temperature=DEFAULT_TEMPERATURE, 
+    reasoning_effort="low", 
+    timeout=10.0
+)
 
 logger = get_logger(__name__)
 
-client = None
-if GROQ_API_KEY:
-    try:
-        client = Groq(api_key=GROQ_API_KEY)
-        logger.info("Groq client successfully loaded")
-    except Exception as exc:
-        logger.error("Groq client failed to load: %s", exc)
-else:
-    logger.error("Groq API Key Missing!")
+_groq_client = None
 
+def _get_groq_client(): 
+    global _groq_client
+    if _groq_client is None: 
+        if not GROQ_API_KEY:
+            logger.error("Groq _groq_client failed to load") 
+            raise RuntimeError(
+                "GROQ API KEY NOT FOUND\n"
+            )
+            
+        _groq_client = Groq(api_key=GROQ_API_KEY)
+        logger.info("Groq _groq_client successfully loaded")
+    return _groq_client
+
+_groq_client = _get_groq_client()
 
 def generate_response(messages: list[dict]) -> str:
-    if client is None:
-        raise RuntimeError("Groq client has not been initialized")
+    if _groq_client is None:
+        raise RuntimeError("Groq _groq_client has not been initialized")
 
-    response = client.chat.completions.create(
-        model=GROQ_MODEL,
+    response = _groq_client.chat.completions.create(
+        model=GENERATOR.model,
         messages=messages, 
-        temperature=DEFAULT_TEMPERATURE,
-        max_tokens=MAX_TOKENS,
+        temperature=GENERATOR.temperature,
+        max_tokens=GENERATOR.max_tokens,
+        reasoning_effort=GENERATOR.reasoning_effort, 
+        timeout=GENERATOR.timeout
     )
 
     return (response.choices[0].message.content or "").strip()

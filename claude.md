@@ -10,8 +10,8 @@ A full-stack RAG application built to ingest and parse financial documents.
 - Backend: Python, FastAPI + SQLAlchemy
 - Server: Postgres (Render Hosted)
 - Data Validation: Pydantic v2
-- Models: Groq
-- Embedding Generation: HuggingFace
+- Models: Groq, Gemini
+- Embedding Generation: Gemini-Embed
 
 ## Code Style & Development Conventions
 

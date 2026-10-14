@@ -71,10 +71,15 @@ The primary goal was to design, develop, and deploy a fully functional RAG syste
 ## Roadmap
 
 - [x] Build & attach vectordb
-~~- [] Allow for document uploads & storage~~
-~~- [] Implement pdf parsing & improve chunking system~~
-- [] Convert to React/TypeScript building components and type validation
-- [] Implement personal dashboard with stats
-- [] Build user sections & google login system
-- [] 
-- Finish UI touches
+- [x] MVP Completion 
+  - Defined as: Full-stack web application with fully usable RAG
+  - HTML & CSS Frontend
+  - Hooked up server & backend (render & fastapi respectively)
+  - Connected to LLM (Groq openai/gpt-oss-120b)
+  - Data storage within server service
+- [] Implement LLM for query gatekeeping & multi-query generation
+- [] PyTest Suite
+- [] Build document ingestion pipeline
+- [] Create document converter (PDF, docx, etc. -> HTML Format) & adjust chunker 
+- [] Render model output
+- [] Migrate to React/TypeScript/Tailwind for frontend & adjust UI view

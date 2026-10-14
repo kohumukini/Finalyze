@@ -19,7 +19,7 @@ except ImportError:  # pragma: no cover - optional dependency in local dev
     def load_dotenv(*args, **kwargs):
         return False
 
-from .config import MODEL_VECTOR_SIZE
+from .config import EMBEDDING_DIMENSIONS
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent.parent / ".env")
 
@@ -66,7 +66,7 @@ class Chunks(Base):
     document_id: Mapped[int] = mapped_column(ForeignKey("documents.document_id"))
     content: Mapped[str] = mapped_column(Text)
     
-    embedding: Mapped[list[float]] = mapped_column(VECTOR(MODEL_VECTOR_SIZE))
+    embedding: Mapped[list[float]] = mapped_column(VECTOR(EMBEDDING_DIMENSIONS))
     metadata_: Mapped[dict] = mapped_column("metadata", metadata_column_type, default = dict)
     
     document: Mapped["Documents"] = relationship("Documents", back_populates="chunks")
