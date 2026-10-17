@@ -61,7 +61,7 @@ class ChatRequest(BaseModel):
 
 # HTTP OUT (nested) - one passage the answer cites. Built by the backend from chunks the model
 # actually cited, never written by the model.
-# id: the [n] label used inside the response text, so a "[3]" in the text maps to the Source with id 3
+# id: the chunk_id, also the [n] label used inside the response text, so a "[27]" in the text maps to the Source with id 27
 # document_name / section: passage citation (e.g. "Coca-Cola FY2023 10-K", "Item 7").
 # excerpt: chunk text, so the UI can show what the answer was based on.
 class Source(BaseModel):

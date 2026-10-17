@@ -7,7 +7,7 @@ from ..core.config import RATE_LIMIT
 from ..core.database import get_db_session
 from ..core.logger import get_logger
 from ..core.schema import ChatRequest, ChatResponse
-from ..services.response_generator import generate_response
+from ..services.response_generator import cited_sources, generate_response
 from ..services.search import retrieve_sources
 
 logger = get_logger(__name__)
@@ -24,15 +24,18 @@ def chat(request: Request, payload: ChatRequest, db: Session = Depends(get_db_se
 
     logger.info("Received chat request")
 
-    # Clients may only supply user/assistant turns; a forged "system" turn would override the prompt
-    history = [m.model_dump() for m in payload.previous_conversation]
-
+    # No role filtering needed: Message.role is Literal['user','assistant'], so a forged "system" turn gets a 422
     try:
-        chunks = retrieve_sources(user_message, db)
-        assistant_response_text = generate_response(chunks, history, user_message)
+        sources = retrieve_sources(user_message, db)
+        assistant_response_text = generate_response(sources, payload.previous_conversation, user_message)
         logger.info("Groq chat completed successfully")
     except Exception as exc:
         logger.error("Chat pipeline failed: %s", exc, exc_info=True)
         raise HTTPException(status_code=502, detail="Unable to generate a response.") from exc
 
-    return ChatResponse(response=assistant_response_text)
+    # shortcut: route is hardcoded until the gatekeeper layer decides it
+    return ChatResponse(
+        response=assistant_response_text,
+        route="rag",
+        sources=cited_sources(assistant_response_text, sources),
+    )
