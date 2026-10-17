@@ -33,11 +33,11 @@ GATEKEEPER = ModelProfile(
 
 logger = get_logger(__name__)
 
-_groq_client = None
+_groq_client: Groq | None = None
 
-def _get_groq_client(): 
+def _get_groq_client() -> Groq:
     global _groq_client
-    if _groq_client is None: 
+    if _groq_client is None:     
         if not GROQ_API_KEY:
             logger.error("Groq _groq_client failed to load") 
             raise RuntimeError(
@@ -48,13 +48,14 @@ def _get_groq_client():
         logger.info("Groq _groq_client successfully loaded")
     return _groq_client
 
-_groq_client = _get_groq_client()
-
 def generate_response(messages: list[dict]) -> str:
-    if _groq_client is None:
-        raise RuntimeError("Groq _groq_client has not been initialized")
+    try: 
+        client = _get_groq_client()
+    except Exception as e: 
+        logger.error(f"[_get_groq_client] Issue importing groq model: {e}")
+        raise
 
-    response = _groq_client.chat.completions.create(
+    response = client.chat.completions.create(
         model=GENERATOR.model,
         messages=messages, 
         temperature=GENERATOR.temperature,

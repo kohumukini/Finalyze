@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, Literal, Annotated
 
-from pydantic import BaseModel, Field, TypeAdapter, StringConstraints, AfterValidator
+from pydantic import BaseModel, Field, TypeAdapter, StringConstraints, AfterValidator, ConfigDict
 
 from .utils.validators import dedupe_strings
 
@@ -23,20 +23,12 @@ UniqueCleanList = Annotated[
     Field(max_length=3)
 ]
 
-# A stored document as returned by the /docs endpoints (list, get by name, and the PUT response).
+# A stored document as returned by the /docs endpoints (list and get by name).
 # TODO - Consider refactoring the metadata structure
 class DocumentItem(BaseModel):
     document_id: int
     document_name: str
     timestamp: datetime | None = None
-    content: str
-    metadata: dict[str, Any] = Field(default_factory=dict)
-
-
-# Request body for PUT /docs: a new document to store, plus free-form metadata
-# TODO - Consider refactoring to ensure strict type validation 
-class DocumentCreateRequest(BaseModel):
-    document_name: str
     content: str
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -71,12 +63,19 @@ class ChatRequest(BaseModel):
 # actually cited, never written by the model.
 # id: the [n] label used inside the response text, so a "[3]" in the text maps to the Source with id 3
 # document_name / section: passage citation (e.g. "Coca-Cola FY2023 10-K", "Item 7").
-# exerpt: chunk text, so the UI can show what the answer was based on.
+# excerpt: chunk text, so the UI can show what the answer was based on.
 class Source(BaseModel):
-    id: int
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+    
+    # Maps with chunk_id
+    id: int = Field(validation_alias="chunk_id")
+    
+    # No need for mapping
     document_name: str
     section: str | None = None
-    excerpt: str
+    
+    # Maps with content
+    excerpt: str = Field(validation_alias="content")
 
 # HTTP OUT - what the browser receives from POST /chat/model.
 # response: the answer text (or the refusal / greeting text).

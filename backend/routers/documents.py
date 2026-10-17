@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from ..core.database import Documents, get_db_session
 from ..core.logger import get_logger
-from ..core.schema import DocumentCreateRequest, DocumentItem
+from ..core.schema import DocumentItem
 
 logger = get_logger(__name__)
 router = APIRouter(prefix="/docs", tags=["documents"])
@@ -32,31 +32,6 @@ def list_documents(db: Session = Depends(get_db_session)):
         db.rollback()
         logger.error("Error fetching documents: %s", exc, exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to fetch documents.") from exc
-
-
-@router.put("", response_model=DocumentItem, status_code=status.HTTP_201_CREATED)
-def add_document(payload: DocumentCreateRequest, db: Session = Depends(get_db_session)):
-    try:
-        document = Documents(
-            content=payload.content,
-            metadata_={**payload.metadata, "name": payload.document_name},
-        )
-        db.add(document)
-        db.commit()
-        db.refresh(document)
-        logger.info("Created document '%s' with id %s", payload.document_name, document.document_id)
-
-        return DocumentItem(
-            document_id=document.document_id,
-            document_name=document.metadata_.get("name", payload.document_name),
-            timestamp=document.timestamp,
-            content=document.content,
-            metadata=document.metadata_,
-        )
-    except SQLAlchemyError as exc:
-        db.rollback()
-        logger.error("Error creating document '%s': %s", payload.document_name, exc, exc_info=True)
-        raise HTTPException(status_code=500, detail="Failed to create document.") from exc
 
 
 @router.get("/{document_name}", response_model=DocumentItem)

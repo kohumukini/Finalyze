@@ -62,12 +62,12 @@ class Chunks(Base):
     __tablename__ = "document_chunks"
 
     chunk_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    document_name: Mapped[str] = mapped_column(nullable=False)
     
     document_id: Mapped[int] = mapped_column(ForeignKey("documents.document_id"))
-    content: Mapped[str] = mapped_column(Text)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
     
-    embedding: Mapped[list[float]] = mapped_column(VECTOR(EMBEDDING_DIMENSIONS))
-    metadata_: Mapped[dict] = mapped_column("metadata", metadata_column_type, default = dict)
+    embedding: Mapped[list[float]] = mapped_column(VECTOR(EMBEDDING_DIMENSIONS), nullable=False)
     
     document: Mapped["Documents"] = relationship("Documents", back_populates="chunks")
 

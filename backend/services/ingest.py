@@ -49,7 +49,7 @@ def ingest_documents(db: Session) -> int:
 
         embeddings = embed_chunks(chunks)
         document.chunks.extend(
-            Chunks(content=content, embedding=embedding, metadata_={"source": document_data["filename"]})
+            Chunks(content=content, embedding=embedding, document_name=document_data["filename"])
             for content, embedding in zip(chunks, embeddings)
         )
         ingested_chunks += len(chunks)

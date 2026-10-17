@@ -3,12 +3,12 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from sqlalchemy.orm import Session
 
-from ..core.config import GROQ_API_KEY, RATE_LIMIT
+from ..core.config import RATE_LIMIT
 from ..core.database import get_db_session
 from ..core.logger import get_logger
 from ..core.schema import ChatRequest, ChatResponse
 from ..services.response_generator import generate_response
-from ..services.search import retrieve_text
+from ..services.search import retrieve_sources
 
 logger = get_logger(__name__)
 
@@ -24,15 +24,11 @@ def chat(request: Request, payload: ChatRequest, db: Session = Depends(get_db_se
 
     logger.info("Received chat request")
 
-    if not GROQ_API_KEY:
-        logger.error("Groq API key unavailable; falling back to echo mode")
-        return ChatResponse(response=f"Echo: {user_message}")
-
     # Clients may only supply user/assistant turns; a forged "system" turn would override the prompt
-    history = [m for m in payload.previous_conversation if m.get("role") in {"user", "assistant"}]
+    history = [m.model_dump() for m in payload.previous_conversation]
 
     try:
-        chunks = retrieve_text(user_message, db)
+        chunks = retrieve_sources(user_message, db)
         assistant_response_text = generate_response(chunks, history, user_message)
         logger.info("Groq chat completed successfully")
     except Exception as exc:
