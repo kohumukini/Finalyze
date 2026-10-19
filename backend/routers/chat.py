@@ -8,7 +8,8 @@ from ..core.database import get_db_session
 from ..core.logger import get_logger
 from ..core.schema import ChatRequest, ChatResponse
 from ..services.response_generator import cited_sources, generate_response
-from ..services.search import retrieve_sources
+from ..services.search import retrieve_sources, list_document_names
+from ..services.llm import gatekeeper
 
 logger = get_logger(__name__)
 
@@ -26,14 +27,17 @@ def chat(request: Request, payload: ChatRequest, db: Session = Depends(get_db_se
 
     # No role filtering needed: Message.role is Literal['user','assistant'], so a forged "system" turn gets a 422
     try:
-        sources = retrieve_sources(user_message, db)
+        decision = gatekeeper(user_message, payload.previous_conversation, list_document_names(db))
+        if decision.route != "rag": 
+            return ChatResponse(response=decision.message, route=decision.route)
+        
+        sources = retrieve_sources(decision.main_query, db)
         assistant_response_text = generate_response(sources, payload.previous_conversation, user_message)
         logger.info("Groq chat completed successfully")
     except Exception as exc:
         logger.error("Chat pipeline failed: %s", exc, exc_info=True)
         raise HTTPException(status_code=502, detail="Unable to generate a response.") from exc
 
-    # shortcut: route is hardcoded until the gatekeeper layer decides it
     return ChatResponse(
         response=assistant_response_text,
         route="rag",

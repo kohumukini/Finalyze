@@ -21,3 +21,8 @@ def retrieve_sources(user_prompt: str, db: Session, top_k: int = 4) -> list[Sour
     
     # With the use of model_config, pydantic will coherce the data to fit the model
     return [Source.model_validate(c) for c in chunks]
+
+# Grab the document names stored within the database
+# Helps contextualize the llm gatekeeper in it's decision
+def list_document_names(db: Session) -> list[str]: 
+    return list(db.scalars(select(Chunks.document_name).distinct()))

@@ -81,7 +81,7 @@ def test_bad_sub_queries_are_rejected(sub_queries):
         _decide({"route": "rag", "main_query": "q", "sub_queries": sub_queries})
 
 
-def test_sub_queries_null_is_allowed():
+def test_sub_queries_null_is_rejected():
     with pytest.raises(ValidationError):
         _decide({"route": "rag", "main_query": "q", "sub_queries": None})
 

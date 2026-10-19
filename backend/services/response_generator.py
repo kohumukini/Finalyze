@@ -3,6 +3,7 @@ import re
 from ..core.schema import Source, Message
 
 from .llm import generate_response as generate_llm_response
+from ..core.utils.helper import fence
 from .prompts import CHAT_SYSTEM_PROMPT
 
 # Matches "[3]" and "[2, 5]"
@@ -12,7 +13,7 @@ _CITATION = re.compile(r"\[(\d+(?:\s*,\s*\d+)*)\]")
 # Sources are labelled [<chunk id>] so the model can cite them; keep in sync with CHAT_SYSTEM_PROMPT
 def _format_context(sources: list[Source]) -> str:
     body = "\n\n".join(f"[{s.id}] ({s.document_name}): {s.excerpt}" for s in sources)
-    return f"<context>\n{body}\n</context>"
+    return fence("context", body)
 
 
 def cited_sources(answer: str, sources: list[Source]) -> list[Source]:
