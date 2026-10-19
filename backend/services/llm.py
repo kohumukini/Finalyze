@@ -2,8 +2,11 @@ from groq import Groq
 
 from typing import Literal
 
+from .prompts import GATEKEEPER_SYSTEM_PROMPT
 from ..core.config import DEFAULT_TEMPERATURE, GROQ_API_KEY, GROQ_GATEKEEPER_MODEL, GROQ_MODEL, MAX_TOKENS
 from ..core.logger import get_logger
+from ..core.schema import GatekeeperDecision, Message, gatekeeper_adapter
+from ..core.utils.helper import fence
 
 from dataclasses import dataclass
 @dataclass(frozen=True)
@@ -14,7 +17,7 @@ class ModelProfile:
     reasoning_effort: Literal["low", "medium", "high"]
     timeout: float
     
-
+    
 GENERATOR = ModelProfile(
     GROQ_MODEL, 
     MAX_TOKENS, 
@@ -52,7 +55,7 @@ def generate_response(messages: list[dict]) -> str:
     try: 
         client = _get_groq_client()
     except Exception as e: 
-        logger.error(f"[_get_groq_client] Issue importing groq model: {e}")
+        logger.error(f"[Generate LLM Response] Issue importing groq model: {e}")
         raise
 
     response = client.chat.completions.create(
@@ -65,3 +68,42 @@ def generate_response(messages: list[dict]) -> str:
     )
 
     return (response.choices[0].message.content or "").strip()
+
+def gatekeeper(query: str, history: list[Message], catalog: list[str]) -> GatekeeperDecision:
+    try: 
+        client = _get_groq_client()
+    except Exception as e: 
+        logger.error(f"[Gatekeeper] Issue with importing groq model: {e}")
+        raise
+    
+    
+    
+    if not catalog:
+        raise RuntimeError("Gatekeeper catalog is empty; ingest documents first")
+
+    # The catalog comes from our own DB, so only the user's text is fenced
+    catalog_text = "\n".join(f"- {name}" for name in catalog)
+    response = client.chat.completions.create(
+        model=GATEKEEPER.model,
+        messages=[
+            {"role": "system", "content": GATEKEEPER_SYSTEM_PROMPT},
+            *(m.model_dump() for m in history[-4:]),
+            {"role": "user", "content": f"<catalog>\n{catalog_text}\n</catalog>\n{fence('user_message', query)}"},
+        ],
+        temperature=GATEKEEPER.temperature,
+        max_tokens=GATEKEEPER.max_tokens,
+        reasoning_effort=GATEKEEPER.reasoning_effort,
+        timeout=GATEKEEPER.timeout,
+        response_format={"type": "json_object"},
+    )
+
+    choice = response.choices[0]
+    if choice.finish_reason == "length":
+        raise RuntimeError("Gatekeeper output was cut off at max_tokens; raise GATEKEEPER.max_tokens")
+
+    raw = choice.message.content or ""
+    try:
+        return gatekeeper_adapter.validate_json(raw)
+    except ValueError as e:
+        logger.error(f"[Gatekeeper] Output did not match a route: {e}; raw={raw[:300]!r}")
+        raise

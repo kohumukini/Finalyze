@@ -10,7 +10,8 @@ TrimmedShortStr = Annotated[
     StringConstraints(
         strip_whitespace=True,
         min_length=1,
-        max_length=400
+        # Adjusted to 100 char over prompt to allow for breathing room
+        max_length=500
     )
 ]
 
@@ -103,7 +104,7 @@ class Direct(BaseModel):
 class RAG(BaseModel):
     route: Literal['rag']
     main_query: TrimmedShortStr
-    sub_queries: UniqueCleanList | None = Field(default_factory=list)
+    sub_queries: UniqueCleanList = Field(default_factory=list)
 
 GatekeeperDecision = Annotated[Refuse | Direct | RAG, Field(discriminator='route')]
 gatekeeper_adapter = TypeAdapter(GatekeeperDecision)
