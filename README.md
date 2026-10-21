@@ -77,8 +77,8 @@ The primary goal was to design, develop, and deploy a fully functional RAG syste
   - Hooked up server & backend (render & fastapi respectively)
   - Connected to LLM (Groq openai/gpt-oss-120b)
   - Data storage within server service
-- [] Implement LLM for query gatekeeping & multi-query generation
-- [] PyTest Suite
+- [x] Implement LLM for query gatekeeping & multi-query generation
+- [x] PyTest Suite
 - [] Build document ingestion pipeline
 - [] Create document converter (PDF, docx, etc. -> HTML Format) & adjust chunker 
 - [] Render model output
