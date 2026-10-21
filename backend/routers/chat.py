@@ -31,7 +31,7 @@ def chat(request: Request, payload: ChatRequest, db: Session = Depends(get_db_se
         if decision.route != "rag": 
             return ChatResponse(response=decision.message, route=decision.route)
         
-        sources = retrieve_sources(decision.main_query, db)
+        sources = retrieve_sources([decision.main_query, *decision.sub_queries], db)
         assistant_response_text = generate_response(sources, payload.previous_conversation, user_message)
         logger.info("Groq chat completed successfully")
     except Exception as exc:

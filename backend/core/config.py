@@ -25,6 +25,7 @@ EMBEDDING_DIMENSIONS = 768
 # RAG Configurations
 MAX_CHUNK_SIZE = 500
 OVERLAP_SIZE = 100
+MAX_DISTANCE = 0.3
 
 # Rate limiting
 RATE_LIMIT = os.getenv("RATE_LIMIT", "5/minute")
