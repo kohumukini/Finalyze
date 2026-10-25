@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Literal, Annotated
+from typing import Literal, Annotated
 
 from pydantic import BaseModel, Field, TypeAdapter, StringConstraints, AfterValidator, ConfigDict
 
@@ -31,20 +31,6 @@ class DocumentItem(BaseModel):
     document_name: str
     timestamp: datetime | None = None
     content: str
-    metadata: dict[str, Any] = Field(default_factory=dict)
-
-
-# A stored chunk of a document together with its embedding; equivalent to one Chunks row
-# TODO - Consider refactoring metadata structure
-class ChunkItem(BaseModel):
-    chunk_id: int
-    document_id: int
-    content: str
-    vector: list[float] = Field(
-        default_factory=list,
-        description="The dense vector representation of a chunk that interprets the semantic meaning of the text",
-    )
-    metadata: dict[str, Any] = Field(default_factory=dict)
 
 # Stores chat message data. 
 # For storing 1 message earlier for chat history

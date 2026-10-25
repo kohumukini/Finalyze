@@ -19,10 +19,9 @@ def list_documents(db: Session = Depends(get_db_session)):
         documents = [
             DocumentItem(
                 document_id=document.document_id,
-                document_name=document.metadata_.get("name", f"document_{document.document_id}"),
+                document_name=document.document_name,
                 timestamp=document.timestamp,
                 content=document.content,
-                metadata=document.metadata_,
             )
             for document in result
         ]
@@ -37,8 +36,8 @@ def list_documents(db: Session = Depends(get_db_session)):
 @router.get("/{document_name}", response_model=DocumentItem)
 def get_document_by_name(document_name: str, db: Session = Depends(get_db_session)):
     try:
-        statement = select(Documents).where(Documents.metadata_["name"].astext == document_name)
-        document = db.execute(statement).scalar_one_or_none()
+        statement = select(Documents).where(Documents.document_name == document_name)
+        document = db.execute(statement).unique().scalar_one_or_none()
 
         if document is None:
             logger.warning("Document '%s' not found", document_name)
@@ -47,10 +46,9 @@ def get_document_by_name(document_name: str, db: Session = Depends(get_db_sessio
         logger.info("Retrieved document '%s' with id %s", document_name, document.document_id)
         return DocumentItem(
             document_id=document.document_id,
-            document_name=document.metadata_.get("name", document_name),
+            document_name=document.document_name,
             timestamp=document.timestamp,
             content=document.content,
-            metadata=document.metadata_,
         )
     except SQLAlchemyError as exc:
         db.rollback()

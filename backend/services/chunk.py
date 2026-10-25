@@ -1,4 +1,5 @@
 import re
+
 from ..core.config import MAX_CHUNK_SIZE, OVERLAP_SIZE
 
 
@@ -45,3 +46,5 @@ def chunk_doc(text):
 
     return chunks
 
+def chunk_finance_docs(text): 
+    chunks: list = [] 

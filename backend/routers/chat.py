@@ -32,6 +32,13 @@ def chat(request: Request, payload: ChatRequest, db: Session = Depends(get_db_se
             return ChatResponse(response=decision.message, route=decision.route)
         
         sources = retrieve_sources([decision.main_query, *decision.sub_queries], db)
+        if not sources: 
+            return ChatResponse(
+                response="I cannot find any relevant information in the provided documents.", 
+                route="refuse", 
+                sources=[]
+            )
+        
         assistant_response_text = generate_response(sources, payload.previous_conversation, user_message)
         logger.info("Groq chat completed successfully")
     except Exception as exc:

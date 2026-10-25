@@ -63,7 +63,7 @@ The primary goal was to design, develop, and deploy a fully functional RAG syste
 | **Frontend** | <span style="color: gray">React, Typescript, Tailwind CSS, Vite</span> - HTML, CSS, JavavScript
 | **Backend**  | Python, FastAPI, SQLAlchemy
 | **Database** | PostgreSQL + pgvector
-| **Embeddings** | HuggingFace Inference API (all-MiniLM-L6-v2)
+| **Embeddings** | Gemini Embedding 2
 | **Deployment** | Render
 
 ## Features
@@ -81,5 +81,5 @@ The primary goal was to design, develop, and deploy a fully functional RAG syste
 - [x] PyTest Suite
 - [] Build document ingestion pipeline
 - [] Create document converter (PDF, docx, etc. -> HTML Format) & adjust chunker 
-- [] Render model output
+- [x] Render model output
 - [] Migrate to React/TypeScript/Tailwind for frontend & adjust UI view

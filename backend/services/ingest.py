@@ -33,13 +33,13 @@ def ingest_documents(db: Session) -> int:
     for document_data in load_documents():
         chunks = [c for c in chunk_doc(document_data["text"]) if c]
         document = db.execute(
-            select(Documents).where(Documents.metadata_["name"].astext == document_data["filename"])
+            select(Documents).where(Documents.document_name == document_data["filename"])
         ).scalar_one_or_none()
 
         if document is None:
             document = Documents(
                 content=document_data["text"],
-                metadata_={"name": document_data["filename"]},
+                document_name = document_data["filename"],
             )
             db.add(document)
             db.flush()

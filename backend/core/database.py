@@ -49,6 +49,7 @@ class Documents(Base):
     __tablename__ = "documents"
 
     document_id: Mapped[int] = mapped_column("document_id", primary_key=True, autoincrement=True)
+    document_name: Mapped[str] = mapped_column(nullable=False, unique=True)
     
     timestamp: Mapped[datetime] = mapped_column(default=func.now())
     

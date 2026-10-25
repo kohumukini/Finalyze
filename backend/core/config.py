@@ -1,4 +1,5 @@
 import os
+from edgar import set_identity
 from pathlib import Path
 
 try:
@@ -9,6 +10,11 @@ except ImportError:  # pragma: no cover - optional dependency in local dev
 
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parents[2] / ".env")
+
+# SEC Identity
+SEC_FIRST = os.getenv('IDENTITY_FIRST')
+SEC_LAST = os.getenv('IDENTITY_LAST')
+SEC_EMAIL = os.getenv('IDENTITY_EMAIL')
 
 # LLM model
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")

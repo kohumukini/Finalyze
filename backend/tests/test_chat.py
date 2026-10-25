@@ -62,7 +62,7 @@ def test_rag(client, mock_chat):
     response = client.post("/chat/model", json={ "message": "how?" })
     assert response.status_code == 200
     assert [s["id"] for s in response.json()["sources"]] == [1]
-    assert calls["retrieve"] == ["catan setup"] and calls["generate"][0][2] == "how?"
+    assert calls["retrieve"] == [["catan setup"]] and calls["generate"][0][2] == "how?"
     
     
 @pytest.mark.parametrize("model", [Refuse, Direct])
@@ -81,7 +81,7 @@ def test_rag_wiring(client, mock_chat):
         {"role": "assistant", "content": "How are you?"},
         {"role": "user", "content": "I'm doing fine"},
     ]
-    calls = mock_chat(RAG(route="rag", main_query = "Introduction"), [], answer = "Something")
+    calls = mock_chat(RAG(route="rag", main_query = "Introduction"), [Source(id=1, document_name="catan.txt", excerpt="x")], answer = "Something")
     response = client.post("/chat/model", json={"message": "Introduction", "previous_conversation": history})
     
     assert calls["gatekeeper"] == [("Introduction", [Message(**m) for m in history], CATALOG)]
