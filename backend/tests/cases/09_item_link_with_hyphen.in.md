@@ -1,0 +1,11 @@
+Certain statements contained in this document constitute forward\-looking statements within the meaning of the Private Securities Litigation Reform Act of 1995\. For these purposes, forward\-looking statements are statements that address activities, events, conditions or developments that the Company expects or anticipates may occur in the future and may relate to such matters as net sales growth, changes in comparable sales, cannibalization of existing locations by new openings, price or fee changes, earnings performance, earnings per share, stock\-based compensation expense, warehouse openings and closures, capital spending, the effect of adopting certain accounting standards, future financial reporting, financing, margins, return on invested capital, strategic direction, expense controls, membership renewal rates, shopping frequency, litigation, and the demand for our products and services\. In some cases, forward\-looking statements can be identified because they contain words such as “anticipate,” “believe,” “continue,” “could,” “estimate,” “expect,” “intend,” “likely,” “may,” “might,” “plan,” “potential,” “predict,” “project,” “seek,” “should,” “target,” “will,” “would,” or similar expressions and the negatives of those terms\. Such forward\-looking statements involve risks and uncertainties that may cause actual events, results, or performance to differ materially from those indicated by such statements, including, without limitation, the factors set forth in the section titled “
+
+### Item 1A-Risk Factors
+
+”, and other factors noted in the section titled “
+
+### Item 7-Management's Discussion and Analysis of Financial Condition and Results of Operations
+
+” and in the consolidated financial statements and related notes in 
+
+### Item 8

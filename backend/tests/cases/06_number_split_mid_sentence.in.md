@@ -1,0 +1,11 @@
+These expenditures are expected to be financed with cash from operations, cash and cash equivalents, and short\-term investments\.
+
+We 
+
+opened 
+
+27
+
+ new warehous
+
+es, including three relocations, in 2025, and plan to open up to 35 new warehouses, including five relocations, in 2026\. There can be no assurance that current expectations will be realized, and plans are subject to change upon further review of our capital expenditure needs and the economic environment\.

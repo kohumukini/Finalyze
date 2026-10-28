@@ -1,0 +1,9 @@
+| Diluted | 444,803 |  | 444,759 |  | 444,452 |  |
+
+The accompanying notes are an integral part of these consolidated financial statements\.
+
+37
+
+<u>Table of Contents</u>
+
+**COSTCO WHOLESALE CORPORATION**
