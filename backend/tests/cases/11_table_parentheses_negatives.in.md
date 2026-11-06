@@ -6,4 +6,3 @@
 | Interest expense | (2,645) |  |  |  | (2,873) |  |  |  | (3,576) |  |
 | Other income/(expense), net | 60 |  |  |  | (87) |  |  |  | 422 |  |
 | Total other income/(expense), net | $ | 258 | (68) | % | $ | 803 | (56) | % | $ | 1,807 |
-
