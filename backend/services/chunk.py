@@ -49,7 +49,7 @@ def chunk_doc(text):
 BLOCK_SPLIT = re.compile(r"\n\s*\n")
 APPLE_FOOTER = re.compile(r"Apple Inc\\?\. \| \d{4} Form 10\\?-K \| \d+")
 IMAGES = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
-TOC = re.compile(r"<u>Table of Contents</u>")
+TOC = re.compile(r"<u>Table +of +Contents</u>")
 HEADER = re.compile(r"#{1,6}[ \t]+(.*)")
 REAL_HEADER = re.compile(r"(PART [IXV]+|Item \d+[A-C]?)\b")
 CONTINUE = re.compile(r"[ a-z,.;:)\]®™”’\\]") # To denote that the sentence hasn't ended
@@ -104,36 +104,36 @@ def fix_lists(blocks: list[str]) -> list[str]:
 
     return valid_blocks
 
-def fix_tables(blocks: list[str]) -> list[str]: 
-    out = []
+# def fix_tables(blocks: list[str]) -> list[str]: 
+#     out = []
     
-    for block in blocks: 
-        if not block.startswith("|"): 
-            out.append(block)
-            continue
+#     for block in blocks: 
+#         if not block.startswith("|"): 
+#             out.append(block)
+#             continue
         
-        rows = [[cell.strip() for cell in line.split("|")[1:-1]] for line in block.splitlines()]
-        header = rows[0]
+#         rows = [[cell.strip() for cell in line.split("|")[1:-1]] for line in block.splitlines()]
+#         header = rows[0]
         
-        if header[0]: 
-            out.append(block)
-            continue
+#         if header[0]: 
+#             out.append(block)
+#             continue
         
-        starts = [0] + [i for i in range(1, len(header)) if header[i]]
-        ends = starts[1:] + [len(header)]
-        groups = list(zip(starts, ends))
+#         starts = [0] + [i for i in range(1, len(header)) if header[i]]
+#         ends = starts[1:] + [len(header)]
+#         groups = list(zip(starts, ends))
         
-        new_lines = []
-        for row in rows: 
-            if all(cell == "---" for cell in row): 
-                new_row = ["---"] * len(groups)
-            else: 
-                new_row = ["".join(row[start:end]) for start,end in groups]
+#         new_lines = []
+#         for row in rows: 
+#             if all(cell == "---" for cell in row): 
+#                 new_row = ["---"] * len(groups)
+#             else: 
+#                 new_row = ["".join(row[start:end]) for start,end in groups]
             
-            new_lines.append("| " + " | ".join(new_row) + " |")
-        out.append("\n".join(new_lines))
+#             new_lines.append("| " + " | ".join(new_row) + " |")
+#         out.append("\n".join(new_lines))
         
-    return out
+#     return out
 
 def demote_headers(blocks: list[str]) -> list[str]: 
     kept = []
@@ -169,7 +169,7 @@ def join_blocks(blocks: list[str]) -> list[str]:
 
 def clean_markdown(text: str) -> str:
     blocks = re.split(BLOCK_SPLIT, text.strip("\n"))
-    blocks = join_blocks(demote_headers(fix_tables(fix_lists(drop_noise(blocks)))))
+    blocks = join_blocks(demote_headers(fix_lists(drop_noise(blocks))))
     text = blocks[0] if blocks else ""
     for previous, block in zip(blocks, blocks[1:]):
         tight = previous.lstrip().startswith("- ") and block.lstrip().startswith("- ")
