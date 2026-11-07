@@ -2,9 +2,10 @@
     <h1>Finalyze</h1>
     <img src="https://img.shields.io/badge/Project_Status-In_Progress-red" height=25 />
     <p>
-        <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" height=25/>
-        <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" height=25/>
+        <img src="https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white" height=25/>
+        <img src="https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E" height=25/>
         <img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" height=25/>
+        <img src="https://img.shields.io/badge/fastapi-005571?style=for-the-badge&logo=fastapi" height=25/>
         <img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white" height=25/>
     </p>
 </div>
@@ -27,44 +28,59 @@ The primary goal was to design, develop, and deploy a fully functional RAG syste
 
 **3. Deployment:** Configured deployment on Render ensuring proper routing between the static frontend assets and FastAPI endpoints.
 
+**4. Testing on Real Data:** Example-based tests alone missed bugs that only appeared in full SEC filings (multi-level tables, double-spaced headings, page footers). Invariant tests run across 15 real 10-Ks check properties that must always hold: no number lost or invented, no leftover noise, and cleaning twice changes nothing. When an invariant fails, the first question is whether the code or the expectation is wrong.
+
+**5. Embeddings and Tables:** Embeddings capture what a chunk is about, not which number belongs to which year. A raw markdown table and a regrouped one embed nearly identically, so tables are kept as-is. What matters for retrieval is that a chunk carries its labels, header row, and section heading. Exact figures are better served later by structured XBRL lookup alongside RAG.
+
 ## Architecture
 
+**Query path**
+
+```text
+  +-------------------+    POST /chat (question + history)    +-----------------------+
+  | Static Frontend   | ------------------------------------> | FastAPI               |
+  | HTML / CSS / JS   | <------------------------------------ | (rate limited)        |
+  +-------------------+    JSON: answer + cited sources       +-----------+-----------+
+                                                                          |
+                     1. Gatekeeper: is the question in scope?             v
+                        rewrite it into search queries        +-----------------------+
+                                                              | Groq: gpt-oss-20b     |
+                                                              +-----------+-----------+
+                                                                          |
+                     2. Embed each query                                  v
+                                                              +-----------------------+
+                                                              | Gemini Embedding 2    |
+                                                              +-----------+-----------+
+                                                                          |
+                     3. Vector search for matching chunks                 v
+                                                              +-----------------------+
+                                                              | PostgreSQL + pgvector |
+                                                              +-----------+-----------+
+                                                                          |
+                     4. Answer from retrieved chunks + history            v
+                                                              +-----------------------+
+                                                              | Groq: gpt-oss-120b    |
+                                                              +-----------------------+
 ```
-  +-----------------+
-  | Static Frontend |
-  +--------+--------+
-           | User Input
-           v
-  +-----------------+       Fetch Request        +-----------------+
-  | JavaScript Form | -------------------------> |  FastAPI App    |
-  +--------+--------+ <------------------------- +--+-----------+--+
-           |                Return JSON             ↑           |
-           | Create elements                        |           | 1. Query for Embeddings
-           v                                        |           v    & Context
-  +-----------------+                               |   +------------------+
-  | DOM Manipulation|                               |   | PostgreSQL +     |
-  +--------+--------+                               |   | pgvector DB      |
-           | Update                                 |   +--------+---------+
-           v                                        |            |
-  +-----------------+                               |            | 2. Return Retrieved
-  | Static Frontend |                               |            |    Context Chunks
-  +-----------------+                               |            v
-                                                    |   +------------------+
-                                                    +-->| Groq API         |
-                                                        | (gpt-oss-120b)   |
-                                                        +------------------+
-                                                          3. Send Context +
-                                                             User Prompt
+
+**Ingestion path** (in progress)
+
+```text
+  edgartools (10-K markdown) -> clean_markdown -> chunk_doc -> Gemini Embedding 2 -> pgvector
 ```
+
 ## Tech
 
 | Layer | Tech |
 |---|---|
-| **Frontend** | <span style="color: gray">React, Typescript, Tailwind CSS, Vite</span> - HTML, CSS, JavavScript
-| **Backend**  | Python, FastAPI, SQLAlchemy
-| **Database** | PostgreSQL + pgvector
-| **Embeddings** | Gemini Embedding 2
-| **Deployment** | Render
+| **Frontend** | HTML, CSS, JavaScript (static; React/TypeScript migration planned) |
+| **Backend** | Python, FastAPI, SQLAlchemy, SlowAPI (rate limiting) |
+| **Database** | PostgreSQL + pgvector |
+| **LLM** | Groq: gpt-oss-120b (answers), gpt-oss-20b (gatekeeper & query rewriting) |
+| **Embeddings** | Gemini Embedding 2 (768 dimensions) |
+| **Documents** | SEC 10-K filings via edgartools (Apple, Costco, T-Mobile) |
+| **Testing** | pytest (golden-master cases + invariant tests on real filings) |
+| **Deployment** | Render |
 
 ## Features
 
@@ -79,7 +95,13 @@ The primary goal was to design, develop, and deploy a fully functional RAG syste
   - Data storage within server service
 - [x] Implement LLM for query gatekeeping & multi-query generation
 - [x] PyTest Suite
-- [] Build document ingestion pipeline
-- [] Create document converter (PDF, docx, etc. -> HTML Format) & adjust chunker 
 - [x] Render model output
-- [] Migrate to React/TypeScript/Tailwind for frontend & adjust UI view
+- [x] Markdown cleaner for 10-K filings (golden-master cases + invariant tests on 15 real filings)
+- [ ] Table-aware chunker
+  - Cut only at sentence ends, block boundaries, table rows, or before headings (no mid-word cuts)
+  - Repeat the table header row and prepend the section heading on split tables
+  - No tiny leftover chunks
+- [ ] Build document ingestion pipeline (edgartools → clean → chunk → embed → store, as one command)
+- [ ] Merge to `main` and re-ingest (planned alongside the database reset)
+- [ ] XBRL lookup for exact financial figures
+- [ ] Migrate to React/TypeScript/Tailwind for frontend & adjust UI view
